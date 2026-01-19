@@ -2,19 +2,45 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Server extends Model
 {
-    public function node() {
+    use HasFactory;
+
+    protected $fillable = [
+        'hostname', 
+        'user_id', 
+        'subscription_id', 
+        'node_id', 
+        'operating_system_id', 
+        'ip_address', 
+        'status'
+    ];
+
+    public function operatingSystem()
+    {
+        return $this->belongsTo(OperatingSystem::class);
+    }
+
+    public function subscription()
+    {
+        return $this->belongsTo(Subscription::class);
+    }
+
+    public function node()
+    {
         return $this->belongsTo(Node::class);
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
-
-    public function plan() {
-        return $this->belongsTo(ServerPlan::class, 'server_plan_id');
+    
+    public function getPlanAttribute()
+    {
+        return $this->subscription->plan ?? null;
     }
 }

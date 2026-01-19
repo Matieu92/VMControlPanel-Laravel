@@ -9,4 +9,6 @@ class OperatingSystem extends Model
     public function serverPlans() {
         return $this->belongsToMany(ServerPlan::class, 'operating_system_server_plan');
     }
+
+    protected $fillable = ['name', 'version'];
 }

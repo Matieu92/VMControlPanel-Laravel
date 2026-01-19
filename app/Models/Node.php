@@ -13,4 +13,8 @@ class Node extends Model
     public function location() {
         return $this->belongsTo(Location::class);
     }
+
+    protected $fillable = [
+    'name', 'location_id', 'ip_address', 'total_ram_mb', 'total_cpu_cores', 'is_active'
+    ];
 }
