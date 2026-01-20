@@ -37,6 +37,21 @@
             --border-color: #ffff00;
         }
 
+        body.high-contrast .btn-primary,
+        body.high-contrast .btn-access {
+            background-color: #ffff00 !important;
+            color: #000000 !important;
+            font-weight: 800;
+            border: 1px solid #000000;
+        }
+        
+        body.high-contrast .btn-primary:hover,
+        body.high-contrast .btn-access:hover {
+            background-color: #ffffff !important; 
+            color: #000000 !important;
+            border-color: #000000;
+        }
+
         * { box-sizing: border-box; }
         
         body {
@@ -195,6 +210,66 @@
             position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
             overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;
         }
+        
+        input, select, textarea, button, optgroup, option {
+            font-family: inherit;
+            font-size: 100%;
+            line-height: 1.15;
+        }
+
+        .form-control, 
+        .form-select, 
+        .btn, 
+        .input-standard,
+        .form-label,
+        .input-group-text {
+            font-size: 1rem !important;
+        }
+
+        body.high-contrast .form-label {
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+
+        h1, .h1, .page-title { font-size: 2.5rem !important; }
+        h2, .h2 { font-size: 2rem !important; }
+        h3, .h3 { font-size: 1.75rem !important; }
+        
+        .input-giant {
+            font-size: 1.5rem !important;
+        }
+        
+        small, .text-small, .form-hint {
+            font-size: 0.875rem !important;
+        }
+
+        body.high-contrast input,
+        body.high-contrast select,
+        body.high-contrast textarea,
+        body.high-contrast .form-control,
+        body.high-contrast .form-select,
+        body.high-contrast .input-standard {
+            background-color: #000000 !important;
+            color: #ffff00 !important;
+            border: 2px solid #ffff00 !important;
+        }
+
+        body.high-contrast input:focus,
+        body.high-contrast select:focus,
+        body.high-contrast textarea:focus,
+        body.high-contrast .form-control:focus,
+        body.high-contrast .form-select:focus,
+        body.high-contrast .input-standard:focus {
+            background-color: #ffff00 !important;
+            color: #000000 !important;
+            outline: none !important;
+            font-weight: bold;
+            box-shadow: 0 0 10px #ffff00;
+        }
+
+        body.high-contrast ::placeholder {
+            color: rgba(255, 255, 0, 0.7) !important;
+        }
     </style>
 </head>
 <body id="main-body" class="{{ (isset($hideSidebar) && $hideSidebar) ? 'no-sidebar' : '' }}">
@@ -211,8 +286,10 @@
 
             @if(auth()->check() && auth()->user()->role === 'admin')
                 <div class="nav-section">Administracja</div>
+                <a href="{{ route('admin.nodes.index') }}" class="nav-link">Węzły (Nodes)</a>
                 <a href="{{ route('admin.plans.index') }}" class="nav-link">Plany Hostingowe</a>
-                <a href="#" class="nav-link">Węzły (Nodes)</a>
+                <a href="{{ route('admin.systems.index') }}" class="nav-link">Systemy</a>
+                <a href="{{ route('admin.servers.index') }}" class="nav-link">Wszystkie Serwery</a>
             @endif
         </nav>
 
@@ -235,9 +312,10 @@
     <main class="main-content" role="main">
         
         <div class="top-bar" aria-label="Narzędzia dostępności">
-            <button class="btn-access" onclick="toggleContrast()">Kontrast</button>
-            <button class="btn-access" onclick="changeFontSize(1)">A+</button>
-            <button class="btn-access" onclick="changeFontSize(-1)">A-</button>
+            <button onclick="toggleContrast()" class="btn-access" aria-label="Zmień kontrast">Kontrast</button>
+            <button onclick="resizeText(1)" class="btn-access" aria-label="Powiększ tekst">A+</button>
+            <button onclick="resetText()" class="btn-access" aria-label="Rozmiar domyślny">A</button>
+            <button onclick="resizeText(-1)" class="btn-access" aria-label="Pomniejsz tekst">A-</button>
         </div>
 
         @if(session('success'))
@@ -256,24 +334,52 @@
     </main>
 
     <script>
-        function toggleContrast() {
-            const body = document.getElementById('main-body');
-            body.classList.toggle('high-contrast');
-            localStorage.setItem('highContrast', body.classList.contains('high-contrast'));
+        let currentFontSize = parseInt(localStorage.getItem('fontSize')) || 100;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Skrypt dostępności załadowany. Aktualny rozmiar:', currentFontSize);
+            
+            if (currentFontSize !== 100) {
+                document.documentElement.style.fontSize = currentFontSize + '%';
+            }
+
+            if (localStorage.getItem('contrast') === 'high') {
+                document.body.classList.add('high-contrast');
+            }
+        });
+
+        function resizeText(multiplier) {
+            currentFontSize += (multiplier * 10);
+
+            if (currentFontSize < 60) currentFontSize = 60;
+            if (currentFontSize > 200) currentFontSize = 200;
+
+            document.documentElement.style.fontSize = currentFontSize + '%';
+            
+            localStorage.setItem('fontSize', currentFontSize);
+            console.log('Zmieniono rozmiar na:', currentFontSize + '%');
         }
 
-        function changeFontSize(delta) {
-            const root = document.documentElement;
-            let currentSize = parseInt(getComputedStyle(root).getPropertyValue('--font-base'));
-            let newSize = currentSize + delta;
-            if(newSize >= 12 && newSize <= 24) {
-                root.style.setProperty('--font-base', newSize + 'px');
-                localStorage.setItem('fontSize', newSize);
+        function resetText() {
+            currentFontSize = 100;
+            
+            document.documentElement.style.fontSize = '100%';
+            
+            localStorage.setItem('fontSize', 100);
+            console.log('Zresetowano rozmiar do 100%');
+        }
+
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+            
+            if (document.body.classList.contains('high-contrast')) {
+                localStorage.setItem('contrast', 'high');
+                console.log('Włączono wysoki kontrast');
+            } else {
+                localStorage.removeItem('contrast');
+                console.log('Wyłączono wysoki kontrast');
             }
         }
-
-        if(localStorage.getItem('highContrast') === 'true') document.getElementById('main-body').classList.add('high-contrast');
-        if(localStorage.getItem('fontSize')) document.documentElement.style.setProperty('--font-base', localStorage.getItem('fontSize') + 'px');
     </script>
 </body>
 </html>

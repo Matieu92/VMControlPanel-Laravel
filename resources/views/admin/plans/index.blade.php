@@ -7,7 +7,7 @@
             <h1 class="page-title">Plany Hostingowe</h1>
             <p class="page-subtitle">Definiuj zasoby i przypisuj dostępne systemy operacyjne</p>
         </div>
-        <button class="btn btn-primary" disabled>+ Nowy Plan</button>
+        <a href="{{ route('admin.plans.create') }}" class="btn btn-primary">Dodaj Plan</a>
     </div>
 </div>
 
@@ -18,7 +18,7 @@
                 <th scope="col">Nazwa Planu</th>
                 <th scope="col">Cena (PLN)</th>
                 <th scope="col">Zasoby (RAM / CPU)</th>
-                <th scope="col">Dostępne Systemy (Relacja N:M)</th>
+                <th scope="col">Dostępne Systemy </th>
                 <th scope="col">Akcje</th>
             </tr>
         </thead>

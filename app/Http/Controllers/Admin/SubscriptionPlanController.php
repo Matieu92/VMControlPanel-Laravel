@@ -14,8 +14,7 @@ class SubscriptionPlanController extends Controller
      */
     public function index()
     {
-        $plans = ServerPlan::with('operatingSystems')->get();
-        
+        $plans = ServerPlan::all();
         return view('admin.plans.index', compact('plans'));
     }
 
@@ -24,7 +23,7 @@ class SubscriptionPlanController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.plans.create');
     }
 
     /**
@@ -32,7 +31,15 @@ class SubscriptionPlanController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'ram_mb' => 'required|integer|min:128',
+            'cpu_cores' => 'required|integer|min:1',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        ServerPlan::create($validated);
+        return redirect()->route('admin.plans.index')->with('success', 'Plan dodany pomyślnie.');
     }
 
     /**
@@ -48,23 +55,31 @@ class SubscriptionPlanController extends Controller
      */
     public function edit(ServerPlan $plan)
     {
-        $allSystems = \App\Models\OperatingSystem::all();
-        return view('admin.plans.edit', compact('plan', 'allSystems'));
+        return view('admin.plans.edit', compact('plan'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, ServerPlan $plan)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'ram_mb' => 'required|integer|min:128',
+            'cpu_cores' => 'required|integer|min:1',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $plan->update($validated);
+        return redirect()->route('admin.plans.index')->with('success', 'Plan zaktualizowany.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(ServerPlan $plan)
     {
-        //
+        $plan->delete();
+        return redirect()->route('admin.plans.index')->with('success', 'Plan usunięty.');
     }
 }

@@ -77,4 +77,52 @@ class ServerController extends Controller
 
         return redirect()->route('servers.index')->with('success', "Serwer został utworzony na węźle {$node->name}.");
     }
+
+    public function show(Server $server)
+    {
+        if ($server->user_id !== Auth::id()) {
+            abort(403, 'Nie masz dostępu do tego serwera.');
+        }
+
+        $server->load(['subscription.plan', 'operatingSystem', 'node']);
+
+        return view('servers.show', compact('server'));
+    }
+
+    public function start(Server $server)
+    {
+        if ($server->user_id !== Auth::id()) abort(403);
+
+        if ($server->status === 'running') {
+            return response()->json(['message' => 'Serwer już działa.', 'status' => 'running']);
+        }
+
+        sleep(5);
+
+        $server->update(['status' => 'running']);
+
+        return response()->json(['message' => 'Serwer uruchomiony.', 'status' => 'running']);
+    }
+
+    public function stop(Server $server)
+    {
+        if ($server->user_id !== Auth::id()) abort(403);
+
+        sleep(4);
+
+        $server->update(['status' => 'stopped']);
+
+        return response()->json(['message' => 'Serwer zatrzymany.', 'status' => 'stopped']);
+    }
+
+    public function restart(Server $server)
+    {
+        if ($server->user_id !== Auth::id()) abort(403);
+
+        sleep(10);
+
+        $server->update(['status' => 'running']);
+
+        return response()->json(['message' => 'Serwer zrestartowany.', 'status' => 'running']);
+    }
 }

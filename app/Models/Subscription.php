@@ -17,6 +17,11 @@ class Subscription extends Model
         'status'
     ];
 
+    protected $casts = [
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
+    ];
+    
     public function plan()
     {
         return $this->belongsTo(ServerPlan::class, 'server_plan_id');

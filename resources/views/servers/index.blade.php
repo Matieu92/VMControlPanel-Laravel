@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    body.high-contrast .status-badge {
+        font-weight: 1000;
+    }
+</style>
 <div class="page-header">
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
@@ -43,7 +48,7 @@
                     @endif
                 </td>
                 <td>
-                    <a href="#" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85rem;">Zarządzaj</a>
+                    <a href="{{ route('servers.show', $server) }}" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85rem;" aria-label="Zarządzaj serwerem {{ $server->hostname }}"> Zarządzaj </a>
                 </td>
             </tr>
             @empty
