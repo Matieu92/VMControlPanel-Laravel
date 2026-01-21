@@ -87,6 +87,12 @@
     body.high-contrast .btn-stop {
         font-weight: 1000;
     }
+    
+    .date-cell {
+        font-size: 0.85rem;
+        color: var(--text-main);
+        font-family: monospace;
+    }
 </style>
 @endpush
 
@@ -103,6 +109,7 @@
                 <th scope="col">Klient</th>
                 <th scope="col">Temat / Kategoria</th>
                 <th scope="col">Priorytet</th>
+                <th scope="col">Data zgłoszenia</th>
                 <th scope="col" style="text-align: right;">Akcje</th>
             </tr>
         </thead>
@@ -135,6 +142,9 @@
                         {{ ucfirst($ticket->priority) }}
                     </div>
                 </td>
+                <td class="date-cell">
+                    {{ $ticket->created_at->format('d.m.Y H:i') }}
+                </td>
                 <td style="text-align: right;">
                     <div class="actions-flex">
                         <a href="{{ route('support.show', $ticket) }}" class="btn btn-primary">Odpowiedz</a>
@@ -150,7 +160,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                <td colspan="6" style="text-align: center; padding: 3rem; color: var(--text-muted);">
                     Brak zgłoszeń wymagających uwagi.
                 </td>
             </tr>

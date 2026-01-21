@@ -3,10 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SupportTicket extends Model
 {
-    protected $fillable = ['user_id', 'server_id', 'subject', 'priority', 'status'];
+    use HasFactory;
+    
+    protected $fillable = [
+        'user_id', 
+        'server_id', 
+        'category', 
+        'subject', 
+        'priority', 
+        'status'
+    ];
 
     public function user() {
         return $this->belongsTo(User::class);

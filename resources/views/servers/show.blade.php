@@ -190,14 +190,15 @@
     </div>
 </div>
 
-<div class="status-card">
+<div class="status-card" role="region" aria-label="Status serwera i szybkie akcje">
     <div style="display: flex; align-items: center; gap: 20px;">
         <div>
             <span style="display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Status</span>
             
             <span id="status-indicator" 
-                  style="font-weight: 800; font-size: 1.1rem; color: 
-                  {{ $server->status === 'running' ? '#16a34a' : ($server->status === 'stopped' ? '#dc2626' : '#d97706') }};">
+                aria-live="polite"
+                style="font-weight: 800; font-size: 1.1rem; color: 
+                {{ $server->status === 'running' ? '#16a34a' : ($server->status === 'stopped' ? '#dc2626' : '#d97706') }};">
                 
                 <span id="status-text">
                     @if($server->status === 'running') RUNNING
@@ -219,8 +220,9 @@
         </div>
     </div>
 
-    <div style="display: flex; gap: 10px;">
+    <div style="display: flex; gap: 10px;" role="group" aria-label="Sterowanie zasilaniem">
         <button class="power-btn btn-start" 
+                aria-label="Uruchom serwer {{ $server->hostname }}"
                 onclick="powerAction('start')" 
                 data-url="{{ route('servers.start', $server) }}"
                 @disabled($server->status !== 'stopped')>
@@ -228,6 +230,7 @@
         </button>
 
         <button class="power-btn btn-restart" 
+                aria-label="Zrestartuj serwer {{ $server->hostname }}"
                 onclick="powerAction('restart')" 
                 data-url="{{ route('servers.restart', $server) }}"
                 @disabled($server->status !== 'running')>
@@ -235,6 +238,7 @@
         </button>
 
         <button class="power-btn btn-stop" 
+                aria-label="Wyłącz serwer {{ $server->hostname }}"
                 onclick="powerAction('stop')" 
                 data-url="{{ route('servers.stop', $server) }}"
                 @disabled($server->status !== 'running')>

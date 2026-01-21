@@ -21,13 +21,15 @@ class PasswordConfirmationTest extends TestCase
 
     public function test_password_can_be_confirmed(): void
     {
+        $this->withoutExceptionHandling();
+
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post('/confirm-password', [
             'password' => 'password',
         ]);
 
-        $response->assertRedirect();
+        $response->assertRedirect(route('home', absolute: false));
         $response->assertSessionHasNoErrors();
     }
 

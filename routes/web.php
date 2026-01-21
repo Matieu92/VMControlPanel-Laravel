@@ -23,7 +23,7 @@ Route::get('/', function () {
         return match($role) {
             'admin'   => redirect()->route('admin.dashboard'),
             'client'  => redirect()->route('servers.index'),
-            'support' => redirect()->route('dashboard'),
+            'support' => redirect()->route('home'),
             default   => redirect()->route('servers.index'),
         };
     }

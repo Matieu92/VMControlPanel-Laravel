@@ -36,4 +36,5 @@ class SupportController extends Controller
 
         return back()->with('success', 'Zgłoszenie zostało zamknięte.');
     }
+    
 }

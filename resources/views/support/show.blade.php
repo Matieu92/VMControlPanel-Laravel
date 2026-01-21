@@ -127,7 +127,7 @@
 @endpush
 
 @section('content')
-<div class="ticket-info-bar">
+<div class="ticket-info-bar" role="region" aria-label="Informacje o zgłoszeniu">
     <div>
         <span class="ticket-id-tag">Zgłoszenie #{{ $ticket->id }}</span>
         <h1 class="page-title" style="margin: 0.5rem 0 0.2rem 0;">{{ $ticket->subject }}</h1>
@@ -144,17 +144,16 @@
         </div>
     </div>
     <div style="text-align: right;">
-        <span class="status-badge">{{ strtoupper($ticket->status) }}</span>
+        <span class="status-badge" aria-label="Status zgłoszenia: {{ $ticket->status }}">{{ strtoupper($ticket->status) }}</span>
     </div>
 </div>
 
-<div class="chat-window">
+<div class="chat-window" role="log" aria-label="Konwersacja z działem wsparcia" aria-relevant="additions">
     @foreach($ticket->messages as $msg)
-        {{-- Logika kierunku wiadomości --}}
-        <div class="message-row {{ $msg->user->role === 'client' ? 'msg-client' : 'msg-support' }}">
+        <div class="message-row {{ $msg->user->role === 'client' ? 'msg-client' : 'msg-support' }}" aria-label="wysłano {{ $msg->created_at->format('H:i') }}">
             <div class="bubble">
-                <span class="bubble-meta">
-                    <span>{{ $msg->user->name }}</span>
+                <span class="bubble-meta" aria-hidden="true">
+                    <span style="padding-right: 8px;">{{ $msg->user->name }}</span>
                     <span>{{ $msg->created_at->format('H:i, d.m.Y') }}</span>
                 </span>
                 <div class="bubble-content">
@@ -166,7 +165,7 @@
 </div>
 
 @if($ticket->status !== 'closed')
-    <div class="reply-box">
+    <div class="reply-box" role="region" aria-label="Wyślij odpowiedź">
         <form action="{{ route('support.message', $ticket) }}" method="POST">
             @csrf
             <label for="reply_message" class="form-label-top">Twoja odpowiedź</label>
@@ -176,15 +175,17 @@
                 class="textarea-full" 
                 placeholder="Wpisz treść wiadomości..." 
                 required
+                aria-required="true"
+                aria-label="Pole treści odpowiedzi"
             ></textarea>
             
             <div class="action-bar">
-                <button type="submit" class="btn btn-primary">Wyślij wiadomość</button>
+                <button type="submit" class="btn btn-primary" aria-label="Wyślij odpowiedź do konsultanta">Wyślij wiadomość</button>
             </div>
         </form>
     </div>
 @else
-    <div class="card" style="text-align: center; border: 3px dashed var(--border-color); background: transparent;">
+    <div class="card" role="status" style="text-align: center; border: 3px dashed var(--border-color); background: transparent;">
         <p style="color: var(--text-muted); font-size: 0.9rem;">To zgłoszenie zostało zakończone. Jeśli masz nowe pytania, otwórz nowe zgłoszenie.</p>
     </div>
 @endif

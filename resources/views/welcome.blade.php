@@ -124,6 +124,10 @@
     .high-contrast .hero-premium {
         background: #000000 !important;
     }
+
+    .top-bar {
+        display: none;
+    }
 </style>
 @endpush
 
@@ -135,11 +139,11 @@
             VM-CONTROL
         </a>
 
-        <div class="header-wcag-tools" role="region" aria-label="Narzędzia dostępności">
-            <button onclick="toggleContrast()" class="btn-access">Kontrast</button>
-            <button onclick="resizeText(1)" class="btn-access">A+</button>
-            <button onclick="resetText()" class="btn-access">A</button>
-            <button onclick="resizeText(-1)" class="btn-access">A-</button>
+        <div class="header-wcag-tools" role="region" aria-label="Narzędzia ułatwień dostępu">
+            <button onclick="toggleContrast()" class="btn-access" aria-label="Włącz lub wyłącz tryb wysokiego kontrastu">Kontrast</button>
+            <button onclick="resizeText(1)" class="btn-access" aria-label="Zwiększ rozmiar tekstu">A+</button>
+            <button onclick="resetText()" class="btn-access" aria-label="Przywróć domyślny rozmiar tekstu">A</button>
+            <button onclick="resizeText(-1)" class="btn-access" aria-label="Zmniejsz rozmiar tekstu">A-</button>
         </div>
 
         <div class="header-actions">
@@ -153,7 +157,7 @@
     </div>
 </header>
 
-<div class="landing-content">
+<div class="landing-content" id="main-content">
     <section class="page-section hero-premium" role="img" aria-label="Sekcja powitalna: Nowoczesna infrastruktura serwerowa">
         <div class="section-container" style="text-align: center;">
             <h1 style="font-size: clamp(2.5rem, 6vw, 4.8rem); font-weight: 900; line-height: 1.1; margin-bottom: 2rem;">
@@ -163,8 +167,8 @@
                 Profesjonalna infrastruktura wirtualna w standardzie Tier III. Pełna izolacja zasobów i wydajność dla wymagających projektów.
             </p>
             <div style="display: flex; gap: 1rem; justify-content: center;">
-                <a href="{{ route('register') }}" class="btn btn-primary" style="padding: 1.25rem 3.5rem;">Wdróż Serwer</a>
-                <a href="#oferta" class="btn btn-access" style="border: 1px solid var(--border-color); padding: 1.25rem 3.5rem;">Cennik Usług</a>
+                <a href="{{ route('register') }}" class="btn btn-primary" style="padding: 1.25rem 3.5rem;" aria-label="Wdróż nowy serwer wirtualny - rejestracja">Wdróż Serwer</a>
+                <a href="#oferta" class="btn btn-access" style="border: 1px solid var(--border-color); padding: 1.25rem 3.5rem;" aria-label="Przejdź do sekcji cennika planów hostingowych">Cennik Usług</a>
             </div>
         </div>
     </section>
@@ -192,7 +196,7 @@
 
     <div class="section-divider"></div>
 
-    <section class="page-section bg-main">
+    <section class="page-section bg-main" aria-label="Szczegóły techniczne i terminal">
         <div class="section-container">
             <div class="grid-2">
                 <div>
@@ -211,8 +215,8 @@
                         </li>
                     </ul>
                 </div>
-                <div class="console-box" role="img" aria-label="Terminal systemowy">
-                    <div style="background: #161b22; padding: 12px 18px; display: flex; gap: 8px; border-bottom: 1px solid #30363d;">
+                <div class="console-box" role="region" aria-label="Podgląd terminala systemowego maszyny wirtualnej">
+                    <div style="background: #161b22; padding: 12px 18px; display: flex; gap: 8px; border-bottom: 1px solid #30363d;" aria-hidden="true">
                         <span style="width: 10px; height: 10px; background: #ff5f56; border-radius: 50%;"></span>
                         <span style="width: 10px; height: 10px; background: #27c93f; border-radius: 50%;"></span>
                     </div>
@@ -237,7 +241,7 @@
                 <p class="text-muted">Proste zasady, bez ukrytych kosztów.</p>
             </header>
             <div class="grid-3">
-                <article class="plan-card">
+                <article class="plan-card" aria-labelledby="plan-starter-title">
                     <h3 class="h4">Cloud Starter</h3>
                     <div class="price-value">19.99 <span class="price-unit">PLN / msc</span></div>
                     <ul style="list-style: none; padding: 0; margin-bottom: 3rem; flex-grow: 1;">
@@ -245,7 +249,7 @@
                         <li style="padding: 0.8rem 0; border-bottom: 1px solid var(--border-color);">4 GB RAM DDR4</li>
                         <li style="padding: 0.8rem 0; border-bottom: 1px solid var(--border-color);">40 GB NVMe SSD</li>
                     </ul>
-                    <a href="{{ route('register') }}" class="btn btn-access" style="border: 1px solid var(--border-color);">Wybierz</a>
+                    <a href="{{ route('register') }}" class="btn btn-access" style="border: 1px solid var(--border-color);" aria-label="Wybierz plan Cloud Starter za 19.99 PLN miesięcznie">Wybierz</a>
                 </article>
 
                 <article class="plan-card featured">
@@ -257,7 +261,7 @@
                         <li style="padding: 0.8rem 0; border-bottom: 1px solid var(--border-color);">8 GB RAM DDR4</li>
                         <li style="padding: 0.8rem 0; border-bottom: 1px solid var(--border-color);">80 GB NVMe SSD</li>
                     </ul>
-                    <a href="{{ route('register') }}" class="btn btn-primary">Wybierz</a>
+                    <a href="{{ route('register') }}" class="btn btn-primary" aria-label="Wybierz plan Cloud Pro za 49.99 PLN miesięcznie">Wybierz</a>
                 </article>
 
                 <article class="plan-card">
@@ -268,7 +272,7 @@
                         <li style="padding: 0.8rem 0; border-bottom: 1px solid var(--border-color);">16 GB RAM DDR4</li>
                         <li style="padding: 0.8rem 0; border-bottom: 1px solid var(--border-color);">160 GB NVMe SSD</li>
                     </ul>
-                    <a href="{{ route('register') }}" class="btn btn-access" style="border: 1px solid var(--border-color);">Wybierz</a>
+                    <a href="{{ route('register') }}" class="btn btn-access" style="border: 1px solid var(--border-color);" aria-label="Wybierz plan Cloud Business za 99.99 PLN miesięcznie">Wybierz</a>
                 </article>
             </div>
         </div>
@@ -282,16 +286,16 @@
                 <div>
                     <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 1.5rem;">Niskie opóźnienia</h2>
                     <p class="text-muted" style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">Bezpośrednie połączenia z punktami IXP gwarantują błyskawiczną komunikację Twoich usług.</p>
-                    <div class="latency-card">
-                        <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); font-family: monospace;">
+                    <div class="latency-card" role="table" aria-label="Statystyki opóźnień sieciowych w lokalizacjach europejskich">
+                        <div aria-label="Warszawa: 2 milisekundy" style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); font-family: monospace;">
                             <span>Warszawa (PL-IX)</span> <span style="color: var(--primary); font-weight: 900;">2ms</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; font-family: monospace;">
+                        <div aria-label="Frankfurt: 11 milisekund" style="display: flex; justify-content: space-between; padding: 0.75rem 0; font-family: monospace;">
                             <span>Frankfurt (DE-CIX)</span> <span style="color: var(--primary); font-weight: 900;">11ms</span>
                         </div>
                     </div>
                 </div>
-                <div style="text-align: center; border: 1px solid var(--border-color); padding: 5rem 2rem; border-radius: 12px; background: rgba(var(--primary-rgb), 0.02);">
+                <div aria-label="Przepustowość węzłów 10Gbps" style="text-align: center; border: 1px solid var(--border-color); padding: 5rem 2rem; border-radius: 12px; background: rgba(var(--primary-rgb), 0.02);">
                     <div style="font-size: 4rem; font-weight: 900; color: var(--primary); margin-bottom: 1rem;">10 Gbps</div>
                     <p style="font-weight: 800; text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem;">Przepustowość węzła</p>
                 </div>

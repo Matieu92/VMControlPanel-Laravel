@@ -139,7 +139,7 @@
         
         <div class="form-section">
             <label for="hostname" class="form-label">Nazwa Hosta</label>
-            <input type="text" id="hostname" name="hostname" class="input-standard" 
+            <input type="text" id="hostname" name="hostname" class="input-standard" aria-describedby="hostname-hint" 
                    placeholder="np. web-server-01" value="{{ old('hostname') }}" required>
             @error('hostname') <span style="color: var(--danger); font-size: 0.85rem;">{{ $message }}</span> @enderror
         </div>
@@ -149,7 +149,7 @@
         <div class="form-section">
             <label class="form-label">Wybierz System Operacyjny</label>
             
-            <div class="os-family-grid" role="radiogroup">
+            <div class="os-family-grid" role="radiogroup" aria-labelledby="os-label">
                 @foreach($groupedSystems as $osName => $versions)
                 <label class="family-card-label" onclick="showVersions('{{ Str::slug($osName) }}')">
                     <input type="radio" name="os_family" class="family-input">
@@ -163,7 +163,7 @@
             </div>
 
             @foreach($groupedSystems as $osName => $versions)
-            <div id="versions-{{ Str::slug($osName) }}" class="versions-container">
+            <div id="versions-{{ Str::slug($osName) }}" class="versions-container" role="region" aria-live="polite">
                 <span style="display: block; margin-bottom: 10px; font-weight: 600; font-size: 0.9rem;">
                     Dostępne wersje dla {{ $osName }}:
                 </span>
@@ -204,7 +204,7 @@
                     <input type="radio" name="server_plan_id" value="{{ $plan->id }}" 
                         class="plan-input" {{ old('server_plan_id') == $plan->id ? 'checked' : '' }} required>
                     
-                    <span class="plan-card-content">
+                    <span class="plan-card-content" aria-label="{{ $plan->name }} - {{ number_format($plan->price) }} złotych miesięcznie">
                         <span style="text-align: center; display: block;">
                             <span style="font-weight: 700; display: block;">{{ $plan->name }}</span>
                             <span style="color: var(--primary); font-weight: 800; font-size: 1.3rem; display: block;">
@@ -230,7 +230,7 @@
 
         <div style="margin-top: 40px; display: flex; gap: 15px;">
             <button type="submit" class="btn btn-primary">Utwórz Serwer</button>
-            <a href="{{ route('servers.index') }}" class="btn" style="border: 1px solid var(--border-color);">Anuluj</a>
+            <a href="{{ route('servers.index') }}" class="btn btn-access" style="border: 1px solid var(--border-color);">Anuluj</a>
         </div>
     </div>
 </form>

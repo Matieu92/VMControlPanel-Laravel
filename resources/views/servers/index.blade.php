@@ -9,20 +9,20 @@
 </style>
 @endpush
 
-<div class="page-header">
+<div class="page-header" role="region" aria-label="Nagłówek sekcji serwerów">
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
             <h1 class="page-title">Moje Serwery</h1>
             <p class="page-subtitle">Zarządzaj swoimi instancjami wirtualnymi</p>
         </div>
-        <a href="{{ route('servers.create') }}" class="btn btn-primary">
+        <a href="{{ route('servers.create') }}" class="btn btn-primary" aria-label="Utwórz nowy serwer wirtualny">
             Utwórz Serwer
         </a>
     </div>
 </div>
 
 <div class="card">
-    <table class="data-table">
+    <table class="data-table" aria-label="Lista Twoich aktywnych i instalowanych serwerów">
         <thead>
             <tr>
                 <th scope="col">Nazwa Hosta</th>
@@ -37,21 +37,21 @@
             <tr>
                 <td><strong>{{ $server->hostname }}</strong></td>
                 <td>{{ $server->ip_address ?? 'Oczekiwanie...' }}</td>
-                <td>
+                <td aria-label="Plan: {{ $server->plan->name }}, System: {{ $server->operatingSystem->name }}">
                     <div>{{ $server->plan->name }}</div>
                     <small style="color: var(--text-muted);">{{ $server->operatingSystem->name }}</small>
                 </td>
                 <td>
                     @if($server->status === 'running')
-                        <span class="status-badge status-running">RUNNING</span>
+                        <span class="status-badge status-running" aria-label="Status: Uruchomiony">RUNNING</span>
                     @elseif($server->status === 'provisioning')
-                        <span class="status-badge status-provisioning">INSTALLING</span>
+                        <span class="status-badge status-provisioning" aria-label="Status: W trakcie instalacji">INSTALLING</span>
                     @else
-                        <span class="status-badge status-stopped">{{ ucfirst($server->status) }}</span>
+                        <span class="status-badge status-stopped" aria-label="Status: {{ $server->status }}">{{ ucfirst($server->status) }}</span>
                     @endif
                 </td>
                 <td>
-                    <a href="{{ route('servers.show', $server) }}" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85rem;" aria-label="Zarządzaj serwerem {{ $server->hostname }}"> Zarządzaj </a>
+                    <a href="{{ route('servers.show', $server) }}" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85rem;" aria-label="Zarządzaj serwerem o nazwie {{ $server->hostname }}"> Zarządzaj </a>
                 </td>
             </tr>
             @empty

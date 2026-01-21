@@ -55,13 +55,13 @@
 @endpush
 
 @section('content')
-<div class="page-header">
+<div class="page-header" role="region" aria-label="Nagłówek sekcji zgłoszeń">
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
             <h1 class="page-title">Moje Zgłoszenia</h1>
             <p class="page-subtitle">Historia komunikacji z działem wsparcia technicznego.</p>
         </div>
-        <a href="{{ route('support.create') }}" class="btn btn-primary">Nowe Zgłoszenie</a>
+        <a href="{{ route('support.create') }}" class="btn btn-primary" aria-label="Utwórz nowe zgłoszenie do pomocy technicznej">Nowe Zgłoszenie</a>
     </div>
 </div>
 
@@ -82,10 +82,10 @@
                 <tr class="ticket-row">
                     <td style="font-family: monospace; color: var(--text-muted);">#{{ $ticket->id }}</td>
                     <td>
-                        <a href="{{ route('support.show', $ticket) }}" class="ticket-subject">
+                        <a href="{{ route('support.show', $ticket) }}" class="ticket-subject" aria-label="Zgłoszenie numer {{ $ticket->id }}: {{ $ticket->subject }}">
                             {{ $ticket->subject }}
                         </a>
-                        <span class="ticket-meta">
+                        <span class="ticket-meta" aria-label="Szczegóły: Kategoria {{ $ticket->category ?? 'Ogólna' }}">
                             Kategoria: 
                             <strong>
                                 @if($ticket->category)
@@ -102,13 +102,13 @@
                         </span>
                     </td>
                     <td>
-                        <div class="priority-tag">
+                        <div class="priority-tag" aria-label="Priorytet: {{ $ticket->priority }}">
                             <span class="priority-dot prio-{{ $ticket->priority }}" aria-hidden="true"></span>
                             <span>{{ ucfirst($ticket->priority) }}</span>
                         </div>
                     </td>
                     <td>
-                        <span class="status-pill status-{{ $ticket->status }}">
+                        <span class="status-pill status-{{ $ticket->status }}" aria-label="Aktualny status: {{ $ticket->status }}">
                             {{ $ticket->status }}
                         </span>
                     </td>
@@ -117,14 +117,14 @@
                     </td>
                     <td style="text-align: right;">
                         <a href="{{ route('support.show', $ticket) }}" class="btn btn-primary" 
-                           style="padding: 0.4rem 0.8rem; font-size: 0.8rem; border: 1px solid var(--border-color);">
+                           style="padding: 0.4rem 0.8rem; font-size: 0.8rem; border: 1px solid var(--border-color);" aria-label="Pokaż rozmowę w zgłoszeniu numer {{ $ticket->id }}">
                             Pokaż rozmowę
                         </a>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 4rem;">
+                    <td colspan="6" style="text-align: center; padding: 4rem;" role="status" aria-live="polite">
                         <div style="color: var(--text-muted);">
                             <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Brak zgłoszeń do wyświetlenia.</p>
                             <p style="font-size: 0.9rem;">Jeśli masz problem, skorzystaj z przycisku powyżej.</p>

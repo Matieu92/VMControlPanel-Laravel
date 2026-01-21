@@ -1,0 +1,25 @@
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TicketMessage>
+ */
+class TicketMessageFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'support_ticket_id' => SupportTicket::factory(),
+            'user_id' => User::factory(),
+            'message' => fake()->paragraph(),
+        ];
+    }
+}

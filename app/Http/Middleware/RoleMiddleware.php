@@ -8,11 +8,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-    public function handle(Request $request, Closure $next, string $role): Response {
-        if (!auth()->check() || auth()->user()->role !== $role) {
-            return redirect('/')->with('error', 'Brak dostępu do tej sekcji.');
-        }
+    public function handle(Request $request, Closure $next, string $role): Response 
+        {
+            if (!auth()->check() || auth()->user()->role !== $role) {
+                abort(403, 'Dostęp zabroniony. Twoje konto nie posiada wystarczających uprawnień do wyświetlenia tej sekcji.');
+            }
 
-        return $next($request);
-    }
+            return $next($request);
+        }
 }

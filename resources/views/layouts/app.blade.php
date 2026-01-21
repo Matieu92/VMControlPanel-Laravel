@@ -371,14 +371,27 @@
     @endunless
     
     <main id="main-content" class="main-content" role="main">
-        
+
+        @unless(isset($hideNav) && $hideNav)
         <div class="top-bar" role="region" aria-label="Narzędzia dostępności">
             <button onclick="toggleContrast()" class="btn-access" aria-label="Zmień kontrast">Kontrast</button>
             <button onclick="resizeText(1)" class="btn-access" aria-label="Powiększ tekst">A+</button>
             <button onclick="resetText()" class="btn-access" aria-label="Rozmiar domyślny">A</button>
             <button onclick="resizeText(-1)" class="btn-access" aria-label="Pomniejsz tekst">A-</button>
         </div>
-
+        @endunless
+        
+        @if ($errors->any())
+        <div role="alert" style="background-color: var(--danger); color: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+            <strong style="display: block; margin-bottom: 5px;">Wystąpiły błędy w formularzu:</strong>
+            <ul style="margin: 0; padding-left: 20px; font-size: 0.9rem;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+        
         @if(session('success'))
             <div role="alert" style="background-color: var(--success); color: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
                 {{ session('success') }}
