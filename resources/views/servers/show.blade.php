@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@push('styles')
 <style>
     .dashboard-grid {
         display: grid;
@@ -173,6 +174,7 @@
         to { transform: translateY(0); opacity: 1; }
     }
 </style>
+@endpush
 
 <div class="page-header">
     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -244,9 +246,9 @@
 <div class="dashboard-grid">
     
     <div class="card">
-        <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 1.1rem; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; display: inline-block;">
+        <h2 style="margin-top: 0; margin-bottom: 20px; font-size: 1.1rem; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; display: inline-block;">
             Konfiguracja
-        </h3>
+        </h2>
         <ul class="info-list">
             <li>
                 <span class="info-label">System Operacyjny</span>
@@ -308,11 +310,6 @@
                 </div>
             </div>
         </div>
-        <div style="margin-top: 15px; text-align: right;">
-            <a href="#" class="btn btn-primary" style="font-size: 0.9rem;">
-                Otwórz Konsolę (Pełny ekran)
-            </a>
-        </div>
     </div>
 
 </div>
@@ -333,10 +330,8 @@
                     <label class="os-option">
                         <input type="radio" name="operating_system_id" value="{{ $os->id }}" required 
                             {{ $server->operating_system_id == $os->id ? 'checked' : '' }}>
-                        <div class="os-text">
-                            <span class="os-name">{{ $os->name }}</span>
-                            <span class="os-ver">{{ $os->version }}</span>
-                        </div>
+                        <span class="os-name">{{ $os->name }}</span>
+                        <span class="os-ver">{{ $os->version }}</span>
                     </label>
                 @endforeach
             </div>
@@ -358,6 +353,11 @@
 
 @endsection
 
+@php
+    $uptime = $server->status === 'running' ? $server->updated_at->diffForHumans(null, true) : '0 min';
+@endphp
+
+@push('scripts')
 <script>
     const terminalRunningTemplate = `
         Welcome to {{ $server->operatingSystem->name ?? 'Linux' }} {{ $server->operatingSystem->version ?? '' }} LTS<br>
@@ -369,7 +369,7 @@
         Memory usage: 12%               IPv4 address:    {{ $server->ip_address ?? '---' }}<br>
         <br>
         <span class="prompt">{{ 'root@' . ($server->hostname ?: 'vps') }}:~#</span> <span class="cmd">uptime</span><br>
-        <span id="term-uptime"></span> up 0 min,  1 user,  load average: 0.50, 0.20, 0.00<br>
+        <span id="term-uptime"></span> up {{ $uptime }},  1 user,  load average: 0.50, 0.20, 0.00<br>
         <span class="prompt">{{ 'root@' . ($server->hostname ?: 'vps') }}:~#</span> <span class="cursor-block"></span>
     `;
 
@@ -484,4 +484,12 @@
             closeReinstallModal();
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const currentStatus = '{{ $server->status }}';
+    
+    updateTerminalContent(currentStatus);
+    updateButtonsState(currentStatus);
+    });
 </script>
+@endpush

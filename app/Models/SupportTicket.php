@@ -6,7 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class SupportTicket extends Model
 {
-    protected $fillable = [
-    'user_id', 'server_id', 'subject', 'priority', 'status'
-    ];
+    protected $fillable = ['user_id', 'server_id', 'subject', 'priority', 'status'];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
+    public function server() {
+        return $this->belongsTo(Server::class);
+    }
+
+    public function messages() {
+        return $this->hasMany(TicketMessage::class);
+    }
 }

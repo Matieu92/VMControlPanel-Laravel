@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Server;
 use App\Models\ServerPlan;
 use App\Models\AuditLog;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+
 
 class AdminServerController extends Controller
 {
@@ -30,28 +32,41 @@ class AdminServerController extends Controller
             'server_plan_id' => 'required|exists:server_plans,id',
         ]);
 
-        $newPlan = ServerPlan::with('operatingSystems')->findOrFail($request->server_plan_id);
-        $currentOsId = $server->operating_system_id;
+        $newPlan = ServerPlan::findOrFail($request->server_plan_id);
+        $currentPlan = $server->subscription->plan;
+        $user = $server->user; 
 
-        $isCompatible = $newPlan->operatingSystems->contains($currentOsId);
+        $priceDifference = (float) $newPlan->price - (float) $currentPlan->price;
 
-        if (!$isCompatible) {
-            return back()->withErrors([
-                'server_plan_id' => "Niekompatybilny plan! Obecny system ({$server->operatingSystem->name}) nie jest dozwolony w wybranym planie. Rozwiązanie: Najpierw przeinstaluj system na serwerze lub wybierz inny plan."
-            ])->withInput();
-        }
+        return \DB::transaction(function () use ($request, $server, $newPlan, $currentPlan, $user, $priceDifference) {
+            
+            if ($priceDifference > 0) {
+                if ($user->balance < $priceDifference) {
+                    return back()->with('error', 'Użytkownik posiada niewystarczające środki (wymagane: ' . number_format($priceDifference, 2) . ' PLN)');
+                }
 
-        $oldPlanName = $server->subscription->plan->name ?? 'Brak';
-        $server->subscription->update(['server_plan_id' => $newPlan->id]);
+                $user->decrement('balance', $priceDifference);
 
-        AuditLog::create([
-            'user_id' => auth()->id(),
-            'action' => 'ADMIN_SERVER_PLAN_CHANGE',
-            'details' => "Zmiana planu serwera {$server->hostname} z {$oldPlanName} na {$newPlan->name}",
-            'ip_address' => $request->ip()
-        ]);
+                Transaction::create([
+                    'user_id'     => $user->id,
+                    'amount'      => $priceDifference,
+                    'type'        => 'PLAN_UPGRADE',
+                    'description' => "Dopłata za zmianę planu serwera {$server->hostname} z {$currentPlan->name} na {$newPlan->name}"
+                ]);
+            }
 
-        return redirect()->route('admin.servers.index')->with('success', 'Plan został zmieniony.');
+            $oldPlanName = $currentPlan->name ?? 'Brak';
+            $server->subscription->update(['server_plan_id' => $newPlan->id]);
+
+            AuditLog::create([
+                'user_id'    => auth()->id(),
+                'action'     => 'ADMIN_SERVER_PLAN_CHANGE',
+                'details'    => "Zmieniono plan serwera {$server->hostname} na {$newPlan->name}. Pobrano: " . number_format($priceDifference > 0 ? $priceDifference : 0, 2) . " PLN",
+                'ip_address' => $request->ip()
+            ]);
+
+            return redirect()->route('admin.servers.index')->with('success', 'Plan został zaktualizowany, a operacja zarejestrowana w finansach.');
+        });
     }
 
     public function destroy(Request $request, Server $server)

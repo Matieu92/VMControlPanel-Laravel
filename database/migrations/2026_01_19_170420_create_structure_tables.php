@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             if (!Schema::hasColumn('users', 'role')) {
                 $table->enum('role', ['admin', 'support', 'client'])->default('client')->after('email');
+                $table->decimal('balance', 10, 2)->default(0.00)->after('email');
             }
         });
 
@@ -81,6 +82,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('server_id')->nullable()->constrained();
+            $table->string('category');
             $table->string('subject');
             $table->enum('priority', ['low', 'medium', 'high']);
             $table->enum('status', ['open', 'answered', 'closed']);
@@ -101,6 +103,15 @@ return new class extends Migration
             $table->string('action');
             $table->text('details')->nullable();
             $table->ipAddress('ip_address')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('transactions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->decimal('amount', 10, 2);
+            $table->string('type');
+            $table->string('description');
             $table->timestamps();
         });
     }

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@push('styles')
 <style>
     .migration-stats {
         display: grid;
@@ -56,6 +57,7 @@
         color: #ffff00;
     }
 </style>
+@endpush
 
 <div class="page-header">
     <h1 class="page-title">Migracja Serwera</h1>

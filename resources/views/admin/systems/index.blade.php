@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@push('styles')
 <style>
     .btn-stop  { 
         background-color: #dc2626; 
@@ -11,6 +12,7 @@
         font-weight: 1000;
     }
 </style>
+@endpush
 <div class="page-header">
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <h1 class="page-title">Systemy Operacyjne</h1>

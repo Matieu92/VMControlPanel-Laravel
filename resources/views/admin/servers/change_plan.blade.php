@@ -53,7 +53,9 @@
         </div>
     </form>
 </div>
+@endsection
 
+@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const select = document.getElementById('planSelect');
@@ -79,4 +81,4 @@ document.addEventListener('DOMContentLoaded', function() {
     checkCompatibility();
 });
 </script>
-@endsection
+@endpush

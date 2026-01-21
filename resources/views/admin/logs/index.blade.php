@@ -28,7 +28,7 @@
                         <div style="font-weight: 600;">{{ $log->user->name }}</div>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">ID: #{{ $log->user_id }}</div>
                     @else
-                        <span style="color: var(--primary); font-weight: 800; letter-spacing: 1px;">[SYSTEM]</span>
+                        <span style="color: var(--primary); font-weight: bold; letter-spacing: 1px;">SYSTEM</span>
                     @endif
                 </td>
                 <td>
@@ -49,7 +49,9 @@
         {{ $logs->links() }}
     </div>
 </div>
+@endsection
 
+@push('styles')
 <style>
     .action-tag {
         background: var(--bg-body);
@@ -63,10 +65,6 @@
         text-transform: uppercase;
     }
 
-    tr:has(span[style*="[SYSTEM]"]) {
-        background-color: rgba(59, 130, 246, 0.02);
-    }
-
     .pagination {
         display: flex;
         gap: 5px;
@@ -74,4 +72,4 @@
         padding: 0;
     }
 </style>
-@endsection
+@endpush

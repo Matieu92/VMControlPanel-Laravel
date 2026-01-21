@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@push('styles')
 <style>
     .systems-grid {
         display: grid;
@@ -48,6 +49,7 @@
         color: var(--text-muted);
     }
 </style>
+@endpush
 
 <div class="page-header">
     <h1 class="page-title">Edytuj Plan: {{ $plan->name }}</h1>
@@ -90,7 +92,7 @@
             </div>
         </div>
  
-        <hr></hr>
+        <hr>
 
         <p class="form-hint" style="margin-bottom: 15px;">
             Zaznacz systemy operacyjne, które mogą być zainstalowane na tym planie. Np. cięższe systemy (Windows) mogą wymagać mocniejszych planów.
@@ -105,10 +107,10 @@
             <label class="system-checkbox-card">
                 <input type="checkbox" name="systems[]" value="{{ $system->id }}" 
                     class="system-checkbox" {{ $isChecked ? 'checked' : '' }}>
-                <div class="system-info-mini">
+                <span class="system-info-mini">
                     <span class="system-name-mini">{{ $system->name }}</span>
                     <span class="system-version-mini">{{ $system->version }}</span>
-                </div>
+                </span>
             </label>
             @endforeach
         </div>

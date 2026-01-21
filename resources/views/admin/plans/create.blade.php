@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@push('styles')
 <style>
     .systems-grid {
         display: grid;
@@ -48,6 +49,7 @@
         color: var(--text-muted);
     }
 </style>
+@endpush
 <div class="page-header">
     <h1 class="page-title">Nowy Plan</h1>
 </div>
@@ -66,9 +68,9 @@
     <form action="{{ route('admin.plans.store') }}" method="POST">
         @csrf
 
-        <h3 class="h3" style="margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        <h2 class="h3" style="margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
             Parametry Planu
-        </h3>
+        </h2>
 
         <div style="margin-bottom: 15px;">
             <label class="form-label">Nazwa Planu</label>
@@ -89,7 +91,7 @@
                 <input type="number" name="cpu_cores" class="input-standard" placeholder="np. 2" required><p>
             </div>
 
-            <hr></hr>
+            <hr>
 
             <p class="form-hint" style="margin-bottom: 15px;">
                 Odznacz systemy, które NIE POWINNY być dostępne dla tego planu (np. zbyt wymagające).
@@ -99,10 +101,10 @@
                 @foreach($systems as $system)
                 <label class="system-checkbox-card">
                     <input type="checkbox" name="systems[]" value="{{ $system->id }}" class="system-checkbox" checked>
-                    <div class="system-info-mini">
+                    <span class="system-info-mini">
                         <span class="system-name-mini">{{ $system->name }}</span>
                         <span class="system-version-mini">{{ $system->version }}</span>
-                    </div>
+                    </span>
                 </label>
                 @endforeach
             </div>

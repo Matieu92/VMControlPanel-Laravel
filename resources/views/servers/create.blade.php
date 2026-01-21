@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@push('styles')
 <style>
     .form-section { margin-bottom: 35px; }
     .form-label { display: block; margin-bottom: 10px; font-weight: 600; color: var(--text-main); }
@@ -109,6 +110,7 @@
     
     @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 </style>
+@endpush
 
 @php
     $groupedSystems = $osList->groupBy('name');
@@ -152,10 +154,10 @@
                 <label class="family-card-label" onclick="showVersions('{{ Str::slug($osName) }}')">
                     <input type="radio" name="os_family" class="family-input">
                     
-                    <div class="family-card-content">
-                        <div class="family-icon">{{ substr($osName, 0, 1) }}</div>
+                    <span class="family-card-content">
+                        <span class="family-icon" aria-hidden="true">{{ substr($osName, 0, 1) }}</span>
                         <span class="family-name">{{ $osName }}</span>
-                    </div>
+                    </span>
                 </label>
                 @endforeach
             </div>
@@ -198,21 +200,23 @@
                     $allowedSystemIds = $plan->operatingSystems->pluck('id')->toJson();
                 @endphp
 
-                <label class="family-card-label plan-item" data-allowed-systems="{{ $allowedSystemIds }}">                    <input type="radio" name="server_plan_id" value="{{ $plan->id }}" 
-                           class="plan-input" {{ old('server_plan_id') == $plan->id ? 'checked' : '' }} required>
+                <label class="family-card-label plan-item" data-allowed-systems="{{ $allowedSystemIds }}">
+                    <input type="radio" name="server_plan_id" value="{{ $plan->id }}" 
+                        class="plan-input" {{ old('server_plan_id') == $plan->id ? 'checked' : '' }} required>
                     
-                    <div class="plan-card-content">
-                        <div style="text-align: center;">
+                    <span class="plan-card-content">
+                        <span style="text-align: center; display: block;">
                             <span style="font-weight: 700; display: block;">{{ $plan->name }}</span>
-                            <span style="color: var(--primary); font-weight: 800; font-size: 1.3rem;">
+                            <span style="color: var(--primary); font-weight: 800; font-size: 1.3rem; display: block;">
                                 {{ number_format($plan->price, 0) }} zł
                             </span>
-                        </div>
-                        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 10px;">
-                            <div>RAM: <strong>{{ $plan->ram_mb / 1024 }} GB</strong></div>
-                            <div>CPU: <strong>{{ $plan->cpu_cores }} vCore</strong></div>
-                        </div>
-                    </div>
+                        </span>
+                        
+                        <span style="font-size: 0.85rem; color: var(--text-muted); margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 10px; display: block;">
+                            <span style="display: block;">RAM: <strong>{{ $plan->ram_mb / 1024 }} GB</strong></span>
+                            <span style="display: block;">CPU: <strong>{{ $plan->cpu_cores }} vCore</strong></span>
+                        </span>
+                    </span>
                 </label>
                 @endforeach
             </div>
@@ -230,7 +234,9 @@
         </div>
     </div>
 </form>
+@endsection
 
+@push('scripts')
 <script>
     function showVersions(slug) {
         document.querySelectorAll('.versions-container').forEach(el => {
@@ -283,4 +289,4 @@
         }
     });
 </script>
-@endsection
+@endpush

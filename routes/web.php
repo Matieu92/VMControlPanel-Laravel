@@ -10,7 +10,9 @@ use App\Http\Controllers\Admin\AdminServerController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\ServerMigrationController;
+use App\Http\Controllers\Admin\SupportController;
 use App\Http\Controllers\ServerController;
+use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\Support\TicketController;
 
 
@@ -53,6 +55,9 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('plans/{plan}/systems', [SubscriptionPlanController::class, 'updateSystems'])->name('plans.updateSystems');
 
         Route::get('/logs', [AuditLogController::class, 'index'])->name('logs.index');
+
+        Route::get('/support', [SupportController::class, 'index'])->name('support.index');
+        Route::post('/support/{ticket}/close', [SupportController::class, 'close'])->name('support.close');
 });
 
 Route::middleware(['auth', 'role:client'])
@@ -65,7 +70,18 @@ Route::middleware(['auth', 'role:client'])
         Route::post('/servers/{server}/restart', [ServerController::class, 'restart'])->name('servers.restart');
         Route::get('/servers/{server}/reinstall', [ServerController::class, 'reinstall'])->name('servers.reinstall');
         Route::post('/servers/{server}/reinstall', [ServerController::class, 'postReinstall'])->name('servers.postReinstall');
-    
+
+        Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');
+        Route::post('/finance/deposit', [FinanceController::class, 'deposit'])->name('finance.deposit');
+
+        Route::get('/support', [TicketController::class, 'index'])->name('support.index');
+        Route::get('/support/create', [TicketController::class, 'create'])->name('support.create');
+        Route::post('/support', [TicketController::class, 'store'])->name('support.store');
     });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/support/{ticket}', [TicketController::class, 'show'])->name('support.show');
+    Route::post('/support/{ticket}/message', [TicketController::class, 'sendMessage'])->name('support.message');    
+});
 
 require __DIR__.'/auth.php';

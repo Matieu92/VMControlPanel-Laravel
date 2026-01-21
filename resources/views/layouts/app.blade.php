@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name', 'VMControlManager') }}</title>
-    
+    <meta name="description" content="Profesjonalne zarządzanie serwerami VPS i chmurą Tier III. Pełna izolacja zasobów KVM, wysoka wydajność oraz zgodność z dostępnością cyfrową WCAG 2.1.">
+    <meta name="author" content="Mateusz Brodzik 21219">
+    <title>{{ config('app.name', 'VMControlManager') }}</title> 
+    @stack('styles')
     <style>
         :root {
             --bg-body: #f4f6f9;
@@ -126,6 +128,10 @@
             font-weight: bold;
         }
 
+        .high-contrast .nav-section {
+            color: rgb(0, 255, 0);
+        }
+
         .main-content {
             flex: 1;
             margin-left: var(--sidebar-width);
@@ -147,7 +153,7 @@
         }
 
         .btn-access {
-            background: none;
+            background: #e7e7e7;
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 5px 12px;
@@ -177,19 +183,24 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            font-size: 1rem; 
         }
+
         .data-table th {
             text-align: left;
             padding: 12px 15px;
             border-bottom: 2px solid var(--border-color);
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.85rem; 
             text-transform: uppercase;
         }
+
         .data-table td {
             padding: 15px;
             border-bottom: 1px solid var(--border-color);
             vertical-align: middle;
+            font-size: 1rem; 
+            color: var(--text-main);
         }
         
         .btn {
@@ -284,9 +295,39 @@
         body.high-contrast ::placeholder {
             color: rgba(255, 255, 0, 0.7) !important;
         }
+
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 0;
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            z-index: 2000;
+            transition: top 0.3s;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .high-contrast .skip-link {
+            color: #000f;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--primary) !important;
+            outline-offset: 2px;
+        }
+
+        body.high-contrast :focus-visible {
+            outline: 3px solid #ffffff !important;
+        }
     </style>
+    @stack('scripts')
 </head>
 <body id="main-body" class="{{ (isset($hideSidebar) && $hideSidebar) ? 'no-sidebar' : '' }}">
+<a href="#main-content" class="skip-link">Przejdź do treści głównej</a>
 
     @unless(isset($hideSidebar) && $hideSidebar)
     <aside class="sidebar">
@@ -298,8 +339,8 @@
             @if(auth()->check() && auth()->user()->role === 'client')
             <div class="nav-section">Panel Klienta</div>
             <a href="{{ route('servers.index') }}" class="nav-link {{ request()->routeIs('servers.index') ? 'active' : '' }}">Moje Serwery</a>
-            <a href="#" class="nav-link">Finanse</a>
-            <a href="#" class="nav-link">Wsparcie</a>
+            <a href="{{ route('finance.index') }}" class="nav-link {{ request()->routeIs('finance.*') ? 'active' : '' }}">Finanse</a>
+            <a href="{{ route('support.index') }}" class="nav-link {{ request()->routeIs('support.*') ? 'active' : '' }}">Wsparcie</a>
             @endif
 
             @if(auth()->check() && auth()->user()->role === 'admin')
@@ -309,6 +350,7 @@
                 <a href="{{ route('admin.systems.index') }}" class="nav-link">Systemy</a>
                 <a href="{{ route('admin.servers.index') }}" class="nav-link">Wszystkie Serwery</a>
                 <a href="{{ route('admin.logs.index') }}" class="nav-link">Logi Systemowe</a>
+                <a href="{{ route('admin.support.index') }}" class="nav-link">Zarządzaj Zgłoszeniami</a>
             @endif
         </nav>
 
@@ -328,9 +370,9 @@
     </aside>
     @endunless
     
-    <main class="main-content" role="main">
+    <main id="main-content" class="main-content" role="main">
         
-        <div class="top-bar" aria-label="Narzędzia dostępności">
+        <div class="top-bar" role="region" aria-label="Narzędzia dostępności">
             <button onclick="toggleContrast()" class="btn-access" aria-label="Zmień kontrast">Kontrast</button>
             <button onclick="resizeText(1)" class="btn-access" aria-label="Powiększ tekst">A+</button>
             <button onclick="resetText()" class="btn-access" aria-label="Rozmiar domyślny">A</button>

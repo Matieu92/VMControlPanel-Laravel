@@ -12,6 +12,8 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
+        Server::checkProvisioning();
+        
         $stats = [
             'total_servers' => Server::count(),
             'active_servers' => Server::where('status', 'running')->count(),

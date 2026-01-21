@@ -1,11 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+@push('styles')
 <style>
     body.high-contrast .status-badge {
         font-weight: 1000;
     }
 </style>
+@endpush
+
 <div class="page-header">
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
@@ -40,9 +43,9 @@
                 </td>
                 <td>
                     @if($server->status === 'running')
-                        <span class="status-badge status-running">Działa</span>
+                        <span class="status-badge status-running">RUNNING</span>
                     @elseif($server->status === 'provisioning')
-                        <span class="status-badge status-provisioning">Instalacja</span>
+                        <span class="status-badge status-provisioning">INSTALLING</span>
                     @else
                         <span class="status-badge status-stopped">{{ ucfirst($server->status) }}</span>
                     @endif

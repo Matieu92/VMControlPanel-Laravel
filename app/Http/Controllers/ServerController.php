@@ -9,6 +9,7 @@ use App\Models\Node;
 use App\Models\OperatingSystem;
 use App\Models\Subscription;
 use App\Models\AuditLog;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,8 @@ class ServerController extends Controller
 {
     public function index()
     {
+        Server::checkProvisioning();
+
         $servers = Server::where('user_id', Auth::id())
             ->with(['subscription.plan', 'operatingSystem', 'node'])
             ->get();
@@ -36,48 +39,68 @@ class ServerController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'hostname' => 'required|string|max:255|unique:servers,hostname',
+            'hostname' => 'required|string|max:255|unique:servers',
             'server_plan_id' => 'required|exists:server_plans,id',
             'operating_system_id' => 'required|exists:operating_systems,id',
         ]);
 
+        $user = Auth::user();
         $plan = ServerPlan::findOrFail($validated['server_plan_id']);
 
+        if ($user->balance < $plan->price) {
+            return back()->withErrors(['error' => 'Niewystarczające środki na koncie. Koszt planu to ' . number_format($plan->price, 2) . ' PLN.'])
+                        ->withInput();
+        }
+
         $node = Node::where('is_active', true)->get()->filter(function ($node) use ($plan) {
-            
             $usedRam = $node->servers->sum(function ($server) {
                 return $server->subscription?->plan?->ram_mb ?? 0;
             });
-
             return ($node->total_ram_mb - $usedRam) >= $plan->ram_mb;
         })->first();
 
         if (!$node) {
-            return back()->withErrors(['error' => 'Brak wolnych zasobów w infrastrukturze dla wybranego planu. Skontaktuj się z supportem.']);
+            return back()->withErrors(['error' => 'Brak wolnych zasobów w wybranej lokalizacji.']);
         }
 
-        DB::transaction(function () use ($validated, $node, $plan) {
+        DB::transaction(function () use ($validated, $node, $plan, $user) {
             
+            $user->decrement('balance', $plan->price);
+
+            Transaction::create([
+                'user_id' => $user->id,
+                'amount' => $plan->price,
+                'type' => 'payment',
+                'description' => "Aktywacja serwera: {$validated['hostname']} (Plan: {$plan->name})"
+            ]);
+
             $sub = Subscription::create([
-                'user_id' => Auth::id(),
+                'user_id' => $user->id,
                 'server_plan_id' => $plan->id,
                 'starts_at' => now(),
                 'ends_at' => now()->addMonth(),
                 'status' => 'active'
             ]);
 
-            Server::create([
+            $server = Server::create([
                 'hostname' => $validated['hostname'],
-                'user_id' => Auth::id(),
+                'user_id' => $user->id,
                 'subscription_id' => $sub->id,
                 'node_id' => $node->id,
                 'operating_system_id' => $validated['operating_system_id'],
                 'status' => 'provisioning',
                 'ip_address' => '10.0.' . rand(1, 255) . '.' . rand(1, 255),
             ]);
+
+            AuditLog::create([
+                'user_id' => $user->id,
+                'action' => 'SERVER_CREATE',
+                'details' => "Zakupiono serwer {$server->hostname}. Pobrano {$plan->price} PLN.",
+                'ip_address' => request()->ip()
+            ]);
         });
 
-        return redirect()->route('servers.index')->with('success', "Serwer został utworzony na węźle {$node->name}.");
+        return redirect()->route('servers.index')->with('success', "Serwer został opłacony i utworzony na węźle {$node->name}.");
     }
 
     public function show(Server $server)
