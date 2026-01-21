@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Node;
+use App\Models\Location;
 use Illuminate\Http\Request;
 
 class NodeController extends Controller
 {
     public function index()
     {
-        $nodes = Node::all();
+        $nodes = Node::with('location')->get();
         return view('admin.nodes.index', compact('nodes'));
     }
 
@@ -25,20 +26,22 @@ class NodeController extends Controller
             'name' => 'required|string|max:255',
             'ip_address' => 'required|ip',
             'total_ram_mb' => 'required|integer|min:1024',
+            'total_cpu_cores' => 'required|integer|min:1',
             'city' => 'required|string',
             'country_code' => 'required|string|size:2',
         ]);
 
-        $locationData = [
+        $location = Location::firstOrCreate([
             'city' => $request->city,
             'country_code' => strtoupper($request->country_code),
-        ];
+        ]);
 
         Node::create([
             'name' => $request->name,
             'ip_address' => $request->ip_address,
             'total_ram_mb' => $request->total_ram_mb,
-            'location' => $locationData,
+            'total_cpu_cores' => $request->total_cpu_cores,
+            'location_id' => $location->id,
             'is_active' => $request->has('is_active'),
         ]);
 
@@ -56,20 +59,22 @@ class NodeController extends Controller
             'name' => 'required|string|max:255',
             'ip_address' => 'required|ip',
             'total_ram_mb' => 'required|integer|min:1024',
+            'total_cpu_cores' => 'required|integer|min:1',
             'city' => 'required|string',
             'country_code' => 'required|string|size:2',
         ]);
 
-        $locationData = [
+        $location = Location::firstOrCreate([
             'city' => $request->city,
             'country_code' => strtoupper($request->country_code),
-        ];
+        ]);
 
         $node->update([
             'name' => $request->name,
             'ip_address' => $request->ip_address,
             'total_ram_mb' => $request->total_ram_mb,
-            'location' => $locationData,
+            'total_cpu_cores' => $request->total_cpu_cores,
+            'location_id' => $location->id,
             'is_active' => $request->has('is_active'),
         ]);
 
@@ -81,7 +86,6 @@ class NodeController extends Controller
         if ($node->servers()->count() > 0) {
             return back()->withErrors(['error' => 'Nie można usunąć węzła, na którym działają serwery.']);
         }
-
         $node->delete();
         return redirect()->route('admin.nodes.index')->with('success', 'Węzeł usunięty.');
     }

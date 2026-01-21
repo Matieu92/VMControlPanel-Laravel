@@ -193,7 +193,12 @@
             <label class="form-label">Plan Zasobów</label>
             <div class="plans-grid" role="radiogroup">
                 @foreach($plans as $plan)
-                <label class="family-card-label" style="display: block;"> <input type="radio" name="server_plan_id" value="{{ $plan->id }}" 
+
+                @php
+                    $allowedSystemIds = $plan->operatingSystems->pluck('id')->toJson();
+                @endphp
+
+                <label class="family-card-label plan-item" data-allowed-systems="{{ $allowedSystemIds }}">                    <input type="radio" name="server_plan_id" value="{{ $plan->id }}" 
                            class="plan-input" {{ old('server_plan_id') == $plan->id ? 'checked' : '' }} required>
                     
                     <div class="plan-card-content">
@@ -211,6 +216,11 @@
                 </label>
                 @endforeach
             </div>
+
+            <div id="no-plans-message" style="display: none; padding: 20px; text-align: center; color: var(--danger); border: 1px dashed var(--danger); border-radius: 8px; margin-top: 15px;">
+                Brak dostępnych planów dla wybranego systemu operacyjnego.
+            </div>
+
             @error('server_plan_id') <span style="color: var(--danger); font-size: 0.85rem;">Wybierz plan.</span> @enderror
         </div>
 
@@ -233,12 +243,43 @@
         }
     }
     document.addEventListener('DOMContentLoaded', function() {
-        const checkedInput = document.querySelector('input[name="operating_system_id"]:checked');
-        if (checkedInput) {
-            const container = checkedInput.closest('.versions-container');
-            if (container) {
-                container.classList.add('active');
-            }
+        const osInputs = document.querySelectorAll('input[name="operating_system_id"]');
+        const plans = document.querySelectorAll('.plan-item');
+        const noPlansMsg = document.getElementById('no-plans-message');
+
+        function filterPlans(selectedOsId) {
+            let visibleCount = 0;
+            
+            selectedOsId = String(selectedOsId);
+
+            plans.forEach(plan => {
+                const allowedSystems = JSON.parse(plan.dataset.allowedSystems);
+                const isAvailable = allowedSystems.length === 0 || allowedSystems.includes(parseInt(selectedOsId));
+
+                if (isAvailable) {
+                    plan.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    plan.style.display = 'none';
+                    const input = plan.querySelector('input');
+                    if(input.checked) input.checked = false;
+                }
+            });
+
+            noPlansMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        osInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                filterPlans(this.value);
+            });
+        });
+
+        const checkedOs = document.querySelector('input[name="operating_system_id"]:checked');
+        if (checkedOs) {
+            filterPlans(checkedOs.value);
+            const container = checkedOs.closest('.versions-container');
+            if(container) container.classList.add('active');
         }
     });
 </script>

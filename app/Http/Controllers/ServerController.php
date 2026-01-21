@@ -8,6 +8,7 @@ use App\Models\ServerPlan;
 use App\Models\Node;
 use App\Models\OperatingSystem;
 use App\Models\Subscription;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -25,10 +26,11 @@ class ServerController extends Controller
 
     public function create()
     {
-        $plans = ServerPlan::all();
-        $osList = OperatingSystem::all();
+        $osList = OperatingSystem::orderBy('name')->orderBy('version')->get();
+        
+        $plans = ServerPlan::with('operatingSystems')->orderBy('price')->get();
 
-        return view('servers.create', compact('plans', 'osList'));
+        return view('servers.create', compact('osList', 'plans'));
     }
 
     public function store(Request $request)
@@ -101,6 +103,13 @@ class ServerController extends Controller
 
         $server->update(['status' => 'running']);
 
+        AuditLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'SERVER_START',
+            'details' => "Uruchomiono serwer: {$server->hostname} (IP: {$server->ip_address})",
+            'ip_address' => request()->ip(),
+        ]);
+
         return response()->json(['message' => 'Serwer uruchomiony.', 'status' => 'running']);
     }
 
@@ -111,6 +120,13 @@ class ServerController extends Controller
         sleep(4);
 
         $server->update(['status' => 'stopped']);
+
+        AuditLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'SERVER_STOP',
+            'details' => "Zatrzymano serwer: {$server->hostname}",
+            'ip_address' => request()->ip(),
+        ]);
 
         return response()->json(['message' => 'Serwer zatrzymany.', 'status' => 'stopped']);
     }
@@ -124,5 +140,42 @@ class ServerController extends Controller
         $server->update(['status' => 'running']);
 
         return response()->json(['message' => 'Serwer zrestartowany.', 'status' => 'running']);
+    }
+
+    public function postReinstall(Request $request, Server $server)
+    {
+        if ($server->user_id !== Auth::id()) abort(403);
+
+        if ($server->status === 'running') {
+            return back()->with('error', 'Nie można przeinstalować systemu na uruchomionym serwerze. Wyłącz go najpierw.');
+        }
+
+        $request->validate([
+            'operating_system_id' => 'required|exists:operating_systems,id'
+        ]);
+
+        if (!$server->subscription->plan->operatingSystems->contains($request->operating_system_id)) {
+            return back()->with('error', 'Wybrany system nie jest kompatybilny z Twoim obecnym planem zasobów.');
+        }
+
+        $oldOsName = $server->operatingSystem ? $server->operatingSystem->name : 'Brak';
+
+        $newOs = \App\Models\OperatingSystem::findOrFail($request->operating_system_id);
+        $newOsName = $newOs->name;
+
+        $server->update([
+            'operating_system_id' => $request->operating_system_id,
+            'status' => 'provisioning',
+            'root_password' => str()->random(16)
+        ]);
+
+        AuditLog::create([
+        'user_id' => Auth::id(),
+        'action' => 'SERVER_REINSTALL',
+        'details' => "Zlecono reinstalację serwera {$server->hostname}. Zmiana z {$oldOsName} na {$newOsName}",
+        'ip_address' => $request->ip(),
+        ]);
+
+        return redirect()->route('servers.show', $server)->with('success', 'Proces reinstalacji został zainicjowany. Dane są właśnie nadpisywane.');
     }
 }

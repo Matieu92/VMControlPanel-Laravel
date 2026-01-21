@@ -130,6 +130,48 @@
     @media (max-width: 900px) {
         .dashboard-grid { grid-template-columns: 1fr; }
     }
+
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+        width: 100%; max-width: 500px;
+        padding: 25px;
+        position: relative;
+        animation: modalSlideUp 0.3s ease-out;
+    }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .btn-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+
+    .os-grid-compact {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;
+    }
+    .os-option {
+        display: flex; align-items: center; gap: 10px; padding: 10px;
+        border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer;
+    }
+    .os-option:hover { border-color: var(--primary); background: var(--bg-body); }
+    .os-name { font-weight: 600; font-size: 0.85rem; display: block; }
+    .os-ver { font-size: 0.7rem; color: var(--text-muted); }
+
+    .modal-danger-notice {
+        background: rgba(220, 53, 69, 0.05); border: 1px solid rgba(220, 53, 69, 0.2);
+        padding: 12px; border-radius: 6px; font-size: 0.85rem; color: #dc3545;
+    }
+
+    .modal-actions { margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end; }
+
+    @keyframes modalSlideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
 </style>
 
 <div class="page-header">
@@ -160,6 +202,7 @@
                     @elseif($server->status === 'provisioning') INSTALLING
                     @else STOPPED
                     @endif
+                    
                 </span>
             </span>
         </div>
@@ -194,7 +237,7 @@
                 data-url="{{ route('servers.stop', $server) }}"
                 @disabled($server->status !== 'running')>
             Stop
-        </button>
+        </button>  
     </div>
 </div>
 
@@ -207,7 +250,16 @@
         <ul class="info-list">
             <li>
                 <span class="info-label">System Operacyjny</span>
-                <span class="info-value">{{ $server->operatingSystem->name ?? 'Linux' }} {{ $server->operatingSystem->version ?? '' }}</span>
+                @if($server->status === 'running')
+                    <span class="info-value" style="color: var(--text-muted); cursor: not-allowed;" title="Wyłącz serwer najpierw">
+                        {{ $server->operatingSystem->name }} {{ $server->operatingSystem->version }}
+                    </span>
+                @else
+                    <span class="info-value clickable" onclick="openReinstallModal()" style="cursor: pointer;">
+                        {{ $server->operatingSystem->name }} {{ $server->operatingSystem->version }}
+                        <small style="margin-left:5px; color: var(--primary);">[Zmień]</small>
+                    </span>
+                @endif
             </li>
             <li>
                 <span class="info-label">Plan</span>
@@ -264,6 +316,46 @@
     </div>
 
 </div>
+
+<div id="reinstallModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content card">
+        <div class="modal-header">
+            <h2 class="h3" style="margin: 0;">Reinstalacja Systemu</h2>
+            <button onclick="closeReinstallModal()" class="btn-close">&times;</button>
+        </div>
+
+        <form action="{{ route('servers.postReinstall', $server) }}" method="POST">
+            @csrf
+            <p class="form-hint">Wybierz nowy obraz systemu dla <strong>{{ $server->hostname }}</strong>.</p>
+
+            <div class="os-grid-compact">
+                @foreach($server->subscription->plan->operatingSystems as $os)
+                    <label class="os-option">
+                        <input type="radio" name="operating_system_id" value="{{ $os->id }}" required 
+                            {{ $server->operating_system_id == $os->id ? 'checked' : '' }}>
+                        <div class="os-text">
+                            <span class="os-name">{{ $os->name }}</span>
+                            <span class="os-ver">{{ $os->version }}</span>
+                        </div>
+                    </label>
+                @endforeach
+            </div>
+
+            <div class="modal-danger-notice">
+                <strong>Uwaga:</strong> Wszystkie dane na serwerze zostaną trwale usunięte.
+                <label style="display: flex; align-items: center; gap: 8px; margin-top: 10px; cursor: pointer;">
+                    <input type="checkbox" required> <span style="font-size: 0.8rem;">Potwierdzam usunięcie danych</span>
+                </label>
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" class="btn btn-danger">Rozpocznij</button>
+                <button type="button" onclick="closeReinstallModal()" class="btn">Anuluj</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @endsection
 
 <script>
@@ -376,5 +468,20 @@
             alert('Błąd połączenia.');
             location.reload(); 
         });
+    }
+
+    function openReinstallModal() {
+    document.getElementById('reinstallModal').style.display = 'flex';
+    }
+
+    function closeReinstallModal() {
+        document.getElementById('reinstallModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        let modal = document.getElementById('reinstallModal');
+        if (event.target == modal) {
+            closeReinstallModal();
+        }
     }
 </script>

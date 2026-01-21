@@ -23,7 +23,8 @@ class SubscriptionPlanController extends Controller
      */
     public function create()
     {
-        return view('admin.plans.create');
+        $systems = OperatingSystem::all();
+        return view('admin.plans.create', compact('systems'));
     }
 
     /**
@@ -36,18 +37,17 @@ class SubscriptionPlanController extends Controller
             'ram_mb' => 'required|integer|min:128',
             'cpu_cores' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0',
+            'systems' => 'nullable|array',
+            'systems.*' => 'exists:operating_systems,id',
         ]);
 
-        ServerPlan::create($validated);
-        return redirect()->route('admin.plans.index')->with('success', 'Plan dodany pomyślnie.');
-    }
+        $plan = ServerPlan::create($validated);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        if ($request->has('systems')) {
+            $plan->operatingSystems()->attach($request->systems);
+        }
+
+        return redirect()->route('admin.plans.index')->with('success', 'Plan dodany pomyślnie.');
     }
 
     /**
@@ -55,7 +55,10 @@ class SubscriptionPlanController extends Controller
      */
     public function edit(ServerPlan $plan)
     {
-        return view('admin.plans.edit', compact('plan'));
+        $systems = OperatingSystem::all();
+        $plan->load('operatingSystems');
+
+        return view('admin.plans.edit', compact('plan', 'systems'));
     }
 
     /**
@@ -68,9 +71,14 @@ class SubscriptionPlanController extends Controller
             'ram_mb' => 'required|integer|min:128',
             'cpu_cores' => 'required|integer|min:1',
             'price' => 'required|numeric|min:0',
+            'systems' => 'nullable|array',
+            'systems.*' => 'exists:operating_systems,id',
         ]);
 
         $plan->update($validated);
+
+        $plan->operatingSystems()->sync($request->input('systems', []));
+
         return redirect()->route('admin.plans.index')->with('success', 'Plan zaktualizowany.');
     }
 
@@ -79,7 +87,9 @@ class SubscriptionPlanController extends Controller
      */
     public function destroy(ServerPlan $plan)
     {
+        $plan->operatingSystems()->detach();
         $plan->delete();
+        
         return redirect()->route('admin.plans.index')->with('success', 'Plan usunięty.');
     }
 }

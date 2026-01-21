@@ -35,6 +35,11 @@
             <input type="number" name="total_ram_mb" class="input-standard" placeholder="np. 32768 (dla 32GB)" required>
         </div>
 
+        <div style="margin-bottom: 15px;">
+            <label class="form-label">Całkowita liczba rdzeni CPU</label>
+            <input type="number" name="total_cpu_cores" class="input-standard" placeholder="np. 16" required> 
+        </div>
+
         <div style="margin-bottom: 20px;">
             <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
                 <input type="checkbox" name="is_active" value="1" checked style="width: 20px; height: 20px;">

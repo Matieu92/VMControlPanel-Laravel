@@ -32,6 +32,7 @@
                 <th>Adres IP</th>
                 <th>Lokalizacja</th>
                 <th>RAM (Total)</th>
+                <th>CPU (Rdzenie)</th>
                 <th>Status</th>
                 <th>Akcje</th>
             </tr>
@@ -45,6 +46,7 @@
                     {{ $node->location->city ?? '-' }} ({{ $node->location->country_code ?? '-' }})
                 </td>
                 <td>{{ number_format($node->total_ram_mb / 1024, 1) }} GB</td>
+                <td>{{ $node->total_cpu_cores }}</td>
                 <td>
                     @if($node->is_active)
                         <span style="color: #16a34a; font-weight: bold;">Aktywny</span>

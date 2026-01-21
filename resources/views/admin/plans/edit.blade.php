@@ -1,6 +1,54 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .systems-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .system-checkbox-card {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: var(--bg-body);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        min-height: 45px;
+    }
+
+    .system-checkbox-card:hover {
+        border-color: var(--primary);
+        background: var(--bg-card);
+    }
+
+    .system-checkbox {
+        width: 16px; 
+        height: 16px;
+        margin: 0;
+    }
+
+    .system-info-mini {
+        line-height: 1.2;
+    }
+
+    .system-name-mini {
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: block;
+    }
+
+    .system-version-mini {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+    }
+</style>
+
 <div class="page-header">
     <h1 class="page-title">Edytuj Plan: {{ $plan->name }}</h1>
 </div>
@@ -41,8 +89,32 @@
                        value="{{ old('cpu_cores', $plan->cpu_cores) }}" required><p>
             </div>
         </div>
-        <div style="display: flex; gap: 15px; margin-top: 20px;">
-            <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+ 
+        <hr></hr>
+
+        <p class="form-hint" style="margin-bottom: 15px;">
+            Zaznacz systemy operacyjne, które mogą być zainstalowane na tym planie. Np. cięższe systemy (Windows) mogą wymagać mocniejszych planów.
+        </p>
+
+        <div class="systems-grid">
+            @foreach($systems as $system)
+                @php
+                    $isChecked = $plan->operatingSystems->contains($system->id);
+                @endphp
+
+            <label class="system-checkbox-card">
+                <input type="checkbox" name="systems[]" value="{{ $system->id }}" 
+                    class="system-checkbox" {{ $isChecked ? 'checked' : '' }}>
+                <div class="system-info-mini">
+                    <span class="system-name-mini">{{ $system->name }}</span>
+                    <span class="system-version-mini">{{ $system->version }}</span>
+                </div>
+            </label>
+            @endforeach
+        </div>
+
+        <div style="margin-top: 40px; display: flex; gap: 15px;">
+            <button type="submit" class="btn btn-primary">Zapisz Zmiany</button>
             <a href="{{ route('admin.plans.index') }}" class="btn" style="border: 1px solid var(--border-color); color: var(--text-main);">Anuluj</a>
         </div>
     </form>

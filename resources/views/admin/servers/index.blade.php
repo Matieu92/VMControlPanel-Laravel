@@ -14,6 +14,7 @@
                 <th>Hostname</th>
                 <th>Węzeł (Node)</th>
                 <th>Plan</th>
+                <th>System</th>
                 <th>Status</th>
                 <th>Akcje</th>
             </tr>
@@ -34,6 +35,7 @@
                     <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $server->node->location->city ?? '' }}</div>
                 </td>
                 <td>{{ $server->plan->name ?? 'Custom' }}</td>
+                <td>{{ $server->operatingsystem->name." ".$server->operatingsystem->version ?? 'Custom' }}</td>
                 <td>
                     @if($server->status === 'running')
                         <span class="status-badge status-running">Działa</span>
@@ -46,6 +48,10 @@
                 <td>
                     <a href="{{ route('admin.servers.migrate', $server) }}" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85rem;">
                         Migruj
+                    </a>
+
+                    <a href="{{ route('admin.servers.edit_plan', $server) }}" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.85rem;">
+                        Zmień Plan
                     </a>
                 </td>
             </tr>

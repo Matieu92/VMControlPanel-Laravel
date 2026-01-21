@@ -86,6 +86,20 @@
             padding-bottom: 20px;
         }
 
+        .brand a, 
+        .brand a:visited, 
+        .brand a:hover, 
+        .brand a:active {
+            color: inherit;
+            text-decoration: none;
+            outline: none;
+            display: block;
+        }
+
+        .brand a:hover {
+            opacity: 0.8;
+        }
+
         .nav-link {
             display: block;
             padding: 12px 15px;
@@ -276,13 +290,17 @@
 
     @unless(isset($hideSidebar) && $hideSidebar)
     <aside class="sidebar">
-        <div class="brand">VM Control</div>
+        <div class="brand">
+            <a href="{{ route('home') }}"> VMControl </a>
+        </div>
         
         <nav role="navigation" aria-label="Menu główne">
+            @if(auth()->check() && auth()->user()->role === 'client')
             <div class="nav-section">Panel Klienta</div>
             <a href="{{ route('servers.index') }}" class="nav-link {{ request()->routeIs('servers.index') ? 'active' : '' }}">Moje Serwery</a>
             <a href="#" class="nav-link">Finanse</a>
             <a href="#" class="nav-link">Wsparcie</a>
+            @endif
 
             @if(auth()->check() && auth()->user()->role === 'admin')
                 <div class="nav-section">Administracja</div>
@@ -290,6 +308,7 @@
                 <a href="{{ route('admin.plans.index') }}" class="nav-link">Plany Hostingowe</a>
                 <a href="{{ route('admin.systems.index') }}" class="nav-link">Systemy</a>
                 <a href="{{ route('admin.servers.index') }}" class="nav-link">Wszystkie Serwery</a>
+                <a href="{{ route('admin.logs.index') }}" class="nav-link">Logi Systemowe</a>
             @endif
         </nav>
 
