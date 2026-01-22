@@ -43,7 +43,8 @@ public function migrate(Request $request, Server $server)
 
         $oldNodeName = $server->node->name;
         
-        $server->update(['node_id' => $newNode->id]);
+        $server->update(['node_id' => $newNode->id,
+        'status' => 'stopped']);
 
         AuditLog::create([
             'user_id' => auth()->id(),

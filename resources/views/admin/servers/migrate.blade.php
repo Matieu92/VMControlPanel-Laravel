@@ -81,7 +81,7 @@
 
         <div class="migration-stats">
             <div class="stat-box">
-                <span class="stat-label">Serwer (Hostname)</span>
+                <span class="stat-label">Serwer (Hostname)</span>  
                 <span class="stat-value">{{ $server->hostname }}</span>
             </div>
             
@@ -92,8 +92,12 @@
 
             <div class="stat-box">
                 <span class="stat-label">Obecny Węzeł</span>
+                @if($server->node)
                 <span class="stat-value">{{ $server->node->name }}</span>
-                <div style="font-size: 0.8rem; margin-top: 2px; color: var(--text-muted);">{{ $server->node->ip_address }}</div>
+                <div style="font-size: 0.8rem; margin-top: 2px; color: var(--text-muted);">{{ $server->node->ip_address }}</div> 
+                @else
+                <span class="stat-value" style="color: var(--danger); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid var(--danger); padding: 2px 6px; border-radius: 4px; background: rgba(229, 62, 62, 0.1);">Nie przypisano</span>
+                @endif
             </div>
             
             <div class="stat-box">
@@ -110,7 +114,6 @@
                 
                 @foreach($nodes as $node)
                     @php
-                        // Logika dostępności RAM (liczona w widoku dla podglądu)
                         $usedRam = $node->servers->sum(fn($s) => $s->plan->ram_mb ?? 0);
                         $freeRam = $node->total_ram_mb - $usedRam;
                         $isAvailable = $freeRam >= $server->plan->ram_mb;

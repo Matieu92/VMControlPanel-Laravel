@@ -43,11 +43,11 @@
                 </td>
                 <td>
                     @if($server->status === 'running')
-                        <span class="status-badge status-running" aria-label="Status: Uruchomiony">RUNNING</span>
+                        <span class="status-badge status-running" role="status" aria-label="Status: Uruchomiony">RUNNING</span>
                     @elseif($server->status === 'provisioning')
-                        <span class="status-badge status-provisioning" aria-label="Status: W trakcie instalacji">INSTALLING</span>
+                        <span class="status-badge status-provisioning" role="status" aria-label="Status: W trakcie instalacji">INSTALLING</span>
                     @else
-                        <span class="status-badge status-stopped" aria-label="Status: {{ $server->status }}">{{ ucfirst($server->status) }}</span>
+                        <span class="status-badge status-stopped" role="status" aria-label="Status: {{ $server->status }}">{{ ucfirst($server->status) }}</span>
                     @endif
                 </td>
                 <td>

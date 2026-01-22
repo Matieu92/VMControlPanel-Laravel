@@ -32,7 +32,7 @@
                     <small style="color: var(--text-muted);">CPU: {{ $plan->cpu_cores }} Core</small>
                 </td>
                 <td>
-                    @forelse($plan->operatingSystems as $os)
+                    @forelse($plan->operatingSystems->unique('name') as $os)
                         <span style="display: inline-block; background: var(--bg-body); border: 1px solid var(--border-color); padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; margin-right: 4px; margin-bottom: 4px;">
                             {{ $os->name }}
                         </span>

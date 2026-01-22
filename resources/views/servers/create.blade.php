@@ -138,7 +138,7 @@
     <div class="card" style="padding: 30px;">
         
         <div class="form-section">
-            <label for="hostname" class="form-label">Nazwa Hosta</label>
+            <label for="hostname" class="form-label" id="hostname-hint">Nazwa Hosta</label>
             <input type="text" id="hostname" name="hostname" class="input-standard" aria-describedby="hostname-hint" 
                    placeholder="np. web-server-01" value="{{ old('hostname') }}" required>
             @error('hostname') <span style="color: var(--danger); font-size: 0.85rem;">{{ $message }}</span> @enderror
@@ -147,7 +147,7 @@
         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 30px 0;">
 
         <div class="form-section">
-            <label class="form-label">Wybierz System Operacyjny</label>
+            <label class="form-label" id="os-label">Wybierz System Operacyjny</label>
             
             <div class="os-family-grid" role="radiogroup" aria-labelledby="os-label">
                 @foreach($groupedSystems as $osName => $versions)
@@ -192,7 +192,7 @@
         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 30px 0;">
 
         <div class="form-section">
-            <label class="form-label">Plan Zasobów</label>
+            <label class="form-label" id="plans-label">Plan Zasobów</label>
             <div class="plans-grid" role="radiogroup">
                 @foreach($plans as $plan)
 
@@ -204,7 +204,7 @@
                     <input type="radio" name="server_plan_id" value="{{ $plan->id }}" 
                         class="plan-input" {{ old('server_plan_id') == $plan->id ? 'checked' : '' }} required>
                     
-                    <span class="plan-card-content" aria-label="{{ $plan->name }} - {{ number_format($plan->price) }} złotych miesięcznie">
+                    <span class="plan-card-content" role="checkbox" aria-checked= "false" aria-label="{{ $plan->name }} - {{ number_format($plan->price) }} złotych miesięcznie">
                         <span style="text-align: center; display: block;">
                             <span style="font-weight: 700; display: block;">{{ $plan->name }}</span>
                             <span style="color: var(--primary); font-weight: 800; font-size: 1.3rem; display: block;">

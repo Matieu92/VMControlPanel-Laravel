@@ -29,10 +29,21 @@
                 </td>
                 <td>{{ $server->hostname }}</td>
                 <td>
-                    <span style="font-family: monospace; background: var(--bg-body); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-color);">
-                        {{ $server->node->name }}
-                    </span>
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $server->node->location->city ?? '' }}</div>
+                    @if($server->node)
+                        <span style="font-family: monospace; background: var(--bg-body); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-color);">
+                            {{ $server->node->name }}
+                        </span>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">
+                            {{ $server->node->location->city ?? 'Lokalizacja nieznana' }}
+                        </div>
+                    @else
+                        <span style="color: var(--danger); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid var(--danger); padding: 2px 6px; border-radius: 4px; background: rgba(229, 62, 62, 0.1);">
+                            Nie przypisano
+                        </span>
+                        <div style="font-size: 0.75rem; color: var(--danger); margin-top: 2px;">
+                            Wymagana interwencja administratora
+                        </div>
+                    @endif
                 </td>
                 <td>{{ $server->plan->name ?? 'Custom' }}</td>
                 <td>{{ $server->operatingsystem->name." ".$server->operatingsystem->version ?? 'Custom' }}</td>

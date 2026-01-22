@@ -40,6 +40,8 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::resource('plans', SubscriptionPlanController::class);
         Route::resource('systems', SystemController::class);
+        Route::post('systems/{system}/detach-servers', [SystemController::class, 'detachServers'])
+        ->name('systems.detach-servers');
         Route::resource('nodes', NodeController::class);
 
         Route::get('servers', [AdminServerController::class, 'index'])->name('servers.index');

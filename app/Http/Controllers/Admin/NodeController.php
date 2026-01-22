@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Node;
+use App\Models\Server;
 use App\Models\Location;
 use Illuminate\Http\Request;
 
@@ -50,7 +51,8 @@ class NodeController extends Controller
 
     public function edit(Node $node)
     {
-        return view('admin.nodes.edit', compact('node'));
+        $servers = Server::all();
+        return view('admin.nodes.edit', compact('node', 'servers'));
     }
 
     public function update(Request $request, Node $node)
@@ -77,6 +79,15 @@ class NodeController extends Controller
             'location_id' => $location->id,
             'is_active' => $request->has('is_active'),
         ]);
+
+        $assignedIds = $request->input('assigned_servers', []);
+
+        Server::where('node_id', $node->id)
+            ->whereNotIn('id', $assignedIds)
+            ->update(['node_id' => null]);
+
+        Server::whereIn('id', $assignedIds)
+            ->update(['node_id' => $node->id]);
 
         return redirect()->route('admin.nodes.index')->with('success', 'Węzeł zaktualizowany.');
     }

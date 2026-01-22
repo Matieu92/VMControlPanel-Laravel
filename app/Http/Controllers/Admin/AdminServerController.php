@@ -57,6 +57,7 @@ class AdminServerController extends Controller
 
             $oldPlanName = $currentPlan->name ?? 'Brak';
             $server->subscription->update(['server_plan_id' => $newPlan->id]);
+            $server->update(['status' => 'stopped']);
 
             AuditLog::create([
                 'user_id'    => auth()->id(),

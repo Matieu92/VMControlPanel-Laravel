@@ -21,7 +21,7 @@
 </div>
 
 @if($errors->any())
-    <div style="color: var(--danger); margin-bottom: 20px; padding: 10px; border: 1px solid var(--danger);">
+    <div style="font-weight: bold; color: var(--danger); margin-bottom: 20px; padding: 10px; border: 1px solid var(--danger);">
         {{ $errors->first() }}
     </div>
 @endif

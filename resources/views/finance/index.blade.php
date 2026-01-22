@@ -58,15 +58,15 @@
 
 <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
     <div class="card" style="text-align: center; padding: 40px;" role="region" aria-label="Twój portfel">
-        <span style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase;">Dostępne środki</span>
-        <div style="font-size: 3rem; font-weight: 800; margin: 10px 0;" aria-labelledby="balance-label" aria-live="polite">
+        <span style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase;" id="balance-label">Dostępne środki</span>
+        <div style="font-size: 3rem; font-weight: 800; margin: 10px 0;" aria-describedby="balance-label" aria-live="polite">
             {{ number_format(Auth::user()->balance, 2) }} <span style="font-size: 1.5rem;">PLN</span>
         </div>
         
         <form action="{{ route('finance.deposit') }}" method="POST" style="margin-top: 20px;">
             @csrf
-            <label for="amount-input" class="sr-only">Kwota doładowania w PLN</label>
-            <input type="number" name="amount" value="50" min="10" class="form-control" style="margin-bottom: 10px; text-align: center;" aria-describedby="amount-hint">
+            <label for="amountinput" class="sr-only">Kwota doładowania w PLN</label>
+            <input type="number" name="amount" id="amountinput" value="50" min="10" class="form-control" style="margin-bottom: 10px; text-align: center;" aria-describedby="amount-hint">
             <span id="amount-hint" class="sr-only">Minimalna kwota doładowania to 10 PLN.</span>
             <button type="button" class="btn btn-primary" style="width: 100%;" onclick="openPaymentModal()" aria-haspopup="dialog" aria-controls="payment-modal">
                 Doładuj portfel
@@ -75,12 +75,12 @@
             <div id="payment-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modal-title">
                 <div class="payment-card">
                     <div id="payment-step-1">
-                        <span class="h3">Bramka Płatności</span>
+                        <span class="h3" id="modal-title">Bramka Płatności</span>
                         <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">Wybrano doładowanie kwotą: <strong id="display-amount" aria-live="polite">0</strong> PLN</p>
                         
                         <div class="mock-card-input" role="group" aria-label="Dane karty płatniczej">
                             <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted);" id="card-label">Numer karty</div>
-                            <div style="letter-spacing: 2px;" aria-labelledby="card-label">**** **** **** 4421</div>
+                            <div style="letter-spacing: 2px;" aria-describedby="card-label">**** **** **** 4421</div>
                         </div>
 
                         <button type="button" class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="processPayment()" aria-label="Potwierdź płatność i przelej środki">

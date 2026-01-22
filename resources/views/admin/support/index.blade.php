@@ -40,6 +40,12 @@
         font-weight: 700;
         text-transform: uppercase;
     }
+
+    .high-contrast .status-pill {
+        color: yellow;
+        border: 1px solid #ffffff;
+    }
+
     .status-open { background: rgba(22, 163, 74, 0.1); color: #16a34a; border: 1px solid #16a34a; }
     .status-answered { background: rgba(37, 99, 235, 0.1); color: #2563eb; border: 1px solid #2563eb; }
     .status-closed { background: rgba(107, 114, 128, 0.1); color: #6b7280; border: 1px solid #6b7280; }
@@ -147,7 +153,15 @@
                 </td>
                 <td style="text-align: right;">
                     <div class="actions-flex">
-                        <a href="{{ route('support.show', $ticket) }}" class="btn btn-primary">Odpowiedz</a>
+                        @if($ticket->status !== 'closed')
+                            <a href="{{ route('support.show', $ticket) }}" class="btn btn-primary" aria-label="Odpowiedz na zgłoszenie {{ $ticket->subject }}">
+                                Odpowiedz
+                            </a>
+                        @else
+                            <span style="display: inline-block; padding: 10px 20px; color: var(--text-muted); background: var(--bg-body); border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.95rem; font-weight: 500;">
+                                Zgłoszenie zakończone
+                            </span>
+                        @endif
                         
                         @if($ticket->status !== 'closed')
                             <form action="{{ route('admin.support.close', $ticket) }}" method="POST">

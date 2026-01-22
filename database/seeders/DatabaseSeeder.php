@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
         $nodes = [];
         foreach ($locs as $i => $l) {
             $nodes[] = Node::create([
-                'name' => 'Node-' . strtoupper($l->city) . '-0' . ($i + 1),
+                'name' => 'Node-' . str($l->city)->substr(0, 3)->upper() . '-0' . ($i + 1),
                 'location_id' => $l->id,
                 'ip_address' => '185.255.' . ($i + 10) . '.1',
                 'total_ram_mb' => 262144,

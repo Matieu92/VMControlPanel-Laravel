@@ -380,18 +380,7 @@
             <button onclick="resizeText(-1)" class="btn-access" aria-label="Pomniejsz tekst">A-</button>
         </div>
         @endunless
-        
-        @if ($errors->any())
-        <div role="alert" style="background-color: var(--danger); color: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-            <strong style="display: block; margin-bottom: 5px;">Wystąpiły błędy w formularzu:</strong>
-            <ul style="margin: 0; padding-left: 20px; font-size: 0.9rem;">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
-        
+       
         @if(session('success'))
             <div role="alert" style="background-color: var(--success); color: white; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
                 {{ session('success') }}

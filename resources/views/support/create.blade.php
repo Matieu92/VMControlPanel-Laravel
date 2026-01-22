@@ -77,7 +77,7 @@
 @section('content')
 <div class="page-header">
     <h1 class="page-title">Nowe Zgłoszenie</h1>
-    <p class="page-subtitle">Wybierz odpowiednią kategorię, aby przyspieszyć proces obsługi.</p>
+    <p class="page-subtitle" id="category-label">Wybierz odpowiednią kategorię, aby przyspieszyć proces obsługi.</p>
 </div>
 
 <form action="{{ route('support.store') }}" method="POST">
@@ -152,9 +152,9 @@
     <div class="card" style="padding: 2rem;">
         <div class="form-grid">
             <div class="form-group">
-                <label class="form-label" for="subject">Temat wiadomości</label>
+                <label class="form-label" for="subject" id="subject-label">Temat wiadomości</label>
                 <input type="text" id="subject" name="subject" class="input-standard" placeholder="Wpisz krótki temat..." required aria-invalid="{{ $errors->has('subject') ? 'true' : 'false' }}"
-                aria-describedby="{{ $errors->has('subject') ? 'error-subject' : '' }}">
+                aria-describedby="{{ $errors->has('subject') ? 'error-subject' : 'subject-label' }}">
             </div>
             <div class="form-group">
                 <label class="form-label" for="server_id">Dotyczy serwera</label>
@@ -169,7 +169,7 @@
 
         <div class="form-group">
             <label class="form-label" for="message">Szczegółowy opis</label>
-            <textarea id="message" name="message" class="textarea-standard" placeholder="Opisz dokładnie swój problem..." required aria-required="true"></textarea>
+            <textarea id="message" name="message" class="textarea-standard" placeholder="Opisz dokładnie swój problem..." required></textarea>
         </div>
 
         <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">

@@ -11,6 +11,12 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
+
+    .high-contrast .status-pill {
+        color: yellow;
+        border: 1px solid #ffffff;
+    }
+
     .status-open { background: rgba(22, 163, 74, 0.1); color: #16a34a; border: 1px solid #16a34a; }
     .status-answered { background: rgba(37, 99, 235, 0.1); color: #2563eb; border: 1px solid #2563eb; }
     .status-closed { background: rgba(107, 114, 128, 0.1); color: #6b7280; border: 1px solid #6b7280; }
@@ -55,7 +61,7 @@
 @endpush
 
 @section('content')
-<div class="page-header" role="region" aria-label="Nagłówek sekcji zgłoszeń">
+<div class="page-header" role="region"  aria-label="Nagłówek sekcji zgłoszeń">
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
             <h1 class="page-title">Moje Zgłoszenia</h1>
@@ -85,7 +91,7 @@
                         <a href="{{ route('support.show', $ticket) }}" class="ticket-subject" aria-label="Zgłoszenie numer {{ $ticket->id }}: {{ $ticket->subject }}">
                             {{ $ticket->subject }}
                         </a>
-                        <span class="ticket-meta" aria-label="Szczegóły: Kategoria {{ $ticket->category ?? 'Ogólna' }}">
+                        <span class="ticket-meta" role="group" aria-label="Szczegóły: Kategoria {{ $ticket->category ?? 'Ogólna' }}">
                             Kategoria: 
                             <strong>
                                 @if($ticket->category)
@@ -102,13 +108,13 @@
                         </span>
                     </td>
                     <td>
-                        <div class="priority-tag" aria-label="Priorytet: {{ $ticket->priority }}">
+                        <div class="priority-tag" role="img" aria-label="Priorytet: {{ $ticket->priority }}">
                             <span class="priority-dot prio-{{ $ticket->priority }}" aria-hidden="true"></span>
                             <span>{{ ucfirst($ticket->priority) }}</span>
                         </div>
                     </td>
                     <td>
-                        <span class="status-pill status-{{ $ticket->status }}" aria-label="Aktualny status: {{ $ticket->status }}">
+                        <span class="status-pill status-{{ $ticket->status }}" role="status" aria-label="Aktualny status: {{ $ticket->status }}">
                             {{ $ticket->status }}
                         </span>
                     </td>

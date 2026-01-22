@@ -144,13 +144,13 @@
         </div>
     </div>
     <div style="text-align: right;">
-        <span class="status-badge" aria-label="Status zgłoszenia: {{ $ticket->status }}">{{ strtoupper($ticket->status) }}</span>
+        <span class="status-badge" role="status" aria-label="Status zgłoszenia: {{ $ticket->status }}">{{ strtoupper($ticket->status) }}</span>
     </div>
 </div>
 
 <div class="chat-window" role="log" aria-label="Konwersacja z działem wsparcia" aria-relevant="additions">
     @foreach($ticket->messages as $msg)
-        <div class="message-row {{ $msg->user->role === 'client' ? 'msg-client' : 'msg-support' }}" aria-label="wysłano {{ $msg->created_at->format('H:i') }}">
+        <div class="message-row {{ $msg->user->role === 'client' ? 'msg-client' : 'msg-support' }}" role="status" aria-label="wysłano {{ $msg->created_at->format('H:i') }}">
             <div class="bubble">
                 <span class="bubble-meta" aria-hidden="true">
                     <span style="padding-right: 8px;">{{ $msg->user->name }}</span>
@@ -175,7 +175,6 @@
                 class="textarea-full" 
                 placeholder="Wpisz treść wiadomości..." 
                 required
-                aria-required="true"
                 aria-label="Pole treści odpowiedzi"
             ></textarea>
             
