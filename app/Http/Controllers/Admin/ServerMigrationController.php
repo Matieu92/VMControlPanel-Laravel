@@ -41,7 +41,7 @@ public function migrate(Request $request, Server $server)
             return back()->withErrors(['error' => "Węzeł {$newNode->name} nie ma wystarczającej ilości wolnej pamięci RAM (Wolne: " . ($newNode->total_ram_mb - $usedRam) . "MB)."]);
         }
 
-        $oldNodeName = $server->node->name;
+        $oldNodeName = $server->node->name ?? 'Nie przypisano';
         
         $server->update(['node_id' => $newNode->id,
         'status' => 'stopped']);

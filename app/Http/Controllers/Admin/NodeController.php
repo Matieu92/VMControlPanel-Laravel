@@ -84,10 +84,12 @@ class NodeController extends Controller
 
         Server::where('node_id', $node->id)
             ->whereNotIn('id', $assignedIds)
-            ->update(['node_id' => null]);
+            ->update(['node_id' => null,
+            'status' => 'stopped']);
 
         Server::whereIn('id', $assignedIds)
-            ->update(['node_id' => $node->id]);
+            ->update(['node_id' => $node->id,
+            'status' => 'stopped']);
 
         return redirect()->route('admin.nodes.index')->with('success', 'Węzeł zaktualizowany.');
     }
